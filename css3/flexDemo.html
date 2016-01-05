@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Web的Flex弹性盒模型</title>
+	<style>
+		body{
+			font-family: '微软雅黑';
+			/*font-family: cursive, '微软雅黑';*/
+			padding: 0;
+			margin: 20px 0 40px;
+			font-size: 16px;
+			background-color: #F9F9F9;
+		}
+		h1{
+			color: #0BF;
+			text-indent: 15px;
+		}
+		h3,h4{
+			color: #6D7273;
+			text-indent: 15px;
+			padding: 10px 0;
+			background-color: #fff;
+		}
+		ul{
+			color: #666;    font-family: '微软雅黑';
+		}
+		p{
+			margin: 0;
+			padding: 0;
+			color: #666;
+			margin-bottom: 5px;
+		}
+		nav{
+			padding: 16px;
+		}
+
+		.boxes{
+			padding: 0 10px;
+			overflow: hidden;
+			display: -webkit-flex;
+			flex-wrap: wrap;
+			align-content:flex-start
+		}
+		.box{
+			width: 400px;
+			padding: 8px;
+			margin-right: 20px;
+			margin-bottom: 10px;
+			display: inline-block;
+			box-shadow: 2px 2px 3px 1px #E0E0E0;
+		}
+
+		.boxstyle{
+			padding: 8px 0;
+		}
+		.boxborder{
+			border: 1px dashed #B6B6B6;
+		}
+		.demo{
+			color: #fff;
+			text-align: center;
+		}
+		.demo .item{
+			line-height: 40px;
+			background-color: #ddd;
+		}
+		.demo .item:nth-child(1){
+			background-color: #E46C49;
+		}
+		.demo .item:nth-child(2){
+			background-color: #37B0D3;
+		}
+		.demo .item:nth-child(3){
+			background-color: #68B33D;
+		}
+		.demo .item:nth-child(4){
+			background-color: #E46775;
+		}
+		.demo .item:nth-child(5){
+			background-color: #CFC731;
+		}
+		.demo .item:nth-child(6){
+			background-color: #8370F4;
+		}
+
+		.demo .item span{
+			display: block;
+		}
+
+		.demo2 .item{
+			height: 60px;
+			width: 150px;
+			word-wrap: break-word;
+			line-height: 1.5;
+		}
+
+		/****flex相关样式******/
+		.demo{
+			display: -webkit-flex;
+		}
+
+		.demo-row{
+			flex-direction: row;
+		}
+		.demo-row-reverse{
+			flex-direction: row-reverse;
+		}
+		.demo-column{
+			height: 200px;
+			flex-direction: column;
+		}
+		.demo-column-reverse{
+			height: 200px;
+			flex-direction: column-reverse;
+		}
+
+		.demo-nowrap{
+			-webkit-flex-wrap: nowrap;
+			width: 400px;
+		}
+		.demo-wrap{
+			-webkit-flex-wrap: wrap;
+			width: 400px;
+		}
+		.demo-wrap-reverse{
+			-webkit-flex-wrap: wrap-reverse;
+			width: 400px;
+		}
+		.demo-align-content{
+			width: 400px;
+			flex-wrap: wrap;
+			height:200px;
+			border: 1px dashed #B6B6B6;
+		}
+		.demo-align-content .item:nth-child(1), .demo-align-content .item:nth-child(2), .demo-align-content .item:nth-child(3),
+		.demo-align-content .item:nth-child(4), .demo-align-content .item:nth-child(5), .demo-align-content .item:nth-child(6){
+			background-color: #717171;
+			width: 80px;
+			margin: 2px 10px;
+		}
+		.demo-flex-grow .item{
+			flex-grow:1;
+		}
+
+		.demo-flex-shrink .item{
+			flex-shrink:1;
+		}
+	</style>
+</head>
+<body>
+	<h1>Web的Flex弹性盒模型</h1>
+	<nav>
+		<div>以下6个属性设置在容器上:</div>
+		<div><a href="#flex-direction">flex-direction</a></div>
+		<div><a href="#flex-wrap">flex-wrap</a></div>
+		<div><a href="#flex-flow">flex-flow</a></div>
+		<div><a href="#justify-content">justify-content</a></div>
+		<div><a href="#align-items">align-items</a></div>
+		<div><a href="#align-content">align-content</a></div>
+		<div>以下6个属性设置在项目上:</div>
+		<div><a href="#align-self">align-self</a></div>
+		<div><a href="#order">order</a></div>
+		<div><a href="#flex-grow">flex-grow</a></div>
+		<div><a href="#flex-shrink">flex-shrink</a></div>
+		<div><a href="#flex-basis">flex-basis</a></div>
+		<div><a href="#flex">flex</a></div>
+		
+	</nav>
+	<section class="content">
+
+		<h3>[ flex ]</h3>
+		<div class="boxes">
+			<div class="box">
+				<div class="boxstyle">
+					<p>display: -webkit-flex;</p>
+				</div>
+				<div class="demo demo1">
+					<div class="item" style="width:100px">width:100px;</div>
+					<div class="item" style="flex:2">flex: 2;</div>
+					<div class="item" style="flex:1">flex: 1;</div>
+				</div>
+			</div>
+
+			<div class="box">
+				<div class="boxstyle">
+					<p>display: -webkit-flex; </p>
+				</div>
+				<div class="demo demo2 boxborder">
+					<div class="item" style="margin-right:10px;">
+						<span>width:150px;</span> <span>margin-right:10px;</span></div>
+						<div class="item" style="flex:1">flex: 1;</div>
+						<div class="item" style="margin-left:10px;">
+							<span>width:150px;</span> <span>margin-left:10px;</span></div>
+						</div>
+					</div>
+				</div>
+				<hr>
+				<h4>以下6个属性设置在容器上:</h4>
+				<hr>
+				<h3 ><a name="flex-direction"></a>[ flex-direction ]：决定主轴的方向（即项目的排列方向）</h3>
+
+				<div class="boxes" style="width:900px">
+					<div class="box">
+						<div class="boxstyle">
+							<p>flex-direction: row; /*default*/</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-row">
+							<div class="item" style="flex:1">flex: 1;</div>
+							<div class="item" style="flex:2">flex: 2;</div>
+							<div class="item" style="flex:3">flex: 3;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>flex-direction: row-reverse;</p>
+							<p>display: -webkit-flex; </p>
+						</div>
+						<div class="demo demo-row-reverse">
+							<div class="item" style="flex:1">flex: 1;</div>
+							<div class="item" style="flex:2">flex: 2;</div>
+							<div class="item" style="flex:3">flex: 3;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>flex-direction: column;</p>
+							<p>display: -webkit-flex; </p>
+						</div>
+						<div class="demo demo-column">
+							<div class="item" style="flex:1">flex: 1;</div>
+							<div class="item" style="flex:2">flex: 2;</div>
+							<div class="item" style="flex:3">flex: 3;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>flex-direction: column-reverse;</p>
+							<p>display: -webkit-flex; </p>
+						</div>
+						<div class="demo demo-column-reverse">
+							<div class="item" style="flex:1">flex: 1;</div>
+							<div class="item" style="flex:2">flex: 2;</div>
+							<div class="item" style="flex:3">flex: 3;</div>
+						</div>
+					</div>
+				</div>
+
+				<h3 name="flex-wrap"><a name="flex-wrap"></a>[ flex-wrap ]：一条轴线排不下，如何换行</h3>
+				<div class="boxes" style="width:1310px">
+					<div class="box">
+						<div class="boxstyle">
+							<p>-webkit-flex-wrap: nowrap; /* default */</p>
+							<p>display: -webkit-flex; </p>
+							<p>width: 400px</p>
+						</div>
+						<div class="demo demo-nowrap">
+							<div class="item" style="width: 100px">100px;</div>
+							<div class="item" style="width: 200px">width: 200px;</div>
+							<div class="item" style="width: 300px">width: 300px;</div>
+						</div>
+					</div>
+					<div class="box">
+						<div class="boxstyle">
+							<p>-webkit-flex-wrap: wrap</p>
+							<p>display: -webkit-flex; </p>
+							<p>width: 400px</p>
+						</div>
+						<div class="demo demo-wrap boxborder">
+							<div class="item" style="width: 100px">100px;</div>
+							<div class="item" style="width: 200px">width: 200px;</div>
+							<div class="item" style="width: 300px">width: 300px;</div>
+						</div>
+					</div>
+					<div class="box">
+						<div class="boxstyle">
+							<p>-webkit-flex-wrap: wrap-reverse</p>
+							<p>display: -webkit-flex; </p>
+							<p>width: 400px</p>
+						</div>
+						<div class="demo demo-wrap-reverse boxborder">
+							<div class="item" style="width: 100px">100px;</div>
+							<div class="item" style="width: 200px">width: 200px;</div>
+							<div class="item" style="width: 300px">width: 300px;</div>
+						</div>
+					</div>	
+				</div>
+
+				<h3><a name="flex-flow"></a>[ flex-flow ]: flex-direction flex-wrap; /* 默认 row nowrap */</h3>
+
+				<h3><a name="justify-content"></a>[ justify-content ]:定义在主轴上的对齐方式</h3>
+				<ul>
+					<li><code>flex-start</code>（默认值）：左对齐</li>
+					<li><code>flex-end</code>：右对齐</li>
+					<li><code>center</code>： 居中</li>
+					<li><code>space-between</code>：两端对齐，项目之间的间隔都相等。</li>
+					<li><code>space-around</code>：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。</li>
+				</ul>
+				<div class="boxes" style="width:1310px;">
+					<div class="box">
+						<div class="boxstyle">
+							<p>/* 效果如同 float:left; */</p>
+							<p>justify-content: flex-start; /* default */</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo boxborder" style="justify-content: flex-start;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p><p>/* 效果如同 float:right; */</p></p>
+							<p>justify-content: flex-end;</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-justify boxborder"  style="justify-content: flex-end;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>/* 第三代水平居中方案 */</p>
+							<p>justify-content: center;</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-justify-end boxborder" style="justify-content: center;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>justify-content: space-between; </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-justify boxborder" style="justify-content: space-between;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>justify-content: space-around; </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-justify-end boxborder" style="justify-content: space-around;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+				</div>
+
+				<h3><a name="align-items"></a>[ align-items ]:定义项目在交叉轴上如何对齐</h3>
+				<ul>
+					<li><code>flex-start</code>：交叉轴的起点对齐。</li>
+					<li><code>flex-end</code>：交叉轴的终点对齐。</li>
+					<li><code>center</code>：交叉轴的中点对齐。</li>
+					<li><code>baseline</code>: 项目的第一行文字的基线对齐。</li>
+					<li><code>stretch</code>（默认值）：如果项目未设置高度或设为auto，将占满整个容器的高度。</li>
+				</ul>
+				<div class="boxes">
+					<div></div>
+					<div class="box">
+						<div class="boxstyle">
+							<p>align-items: flex-start; </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo boxborder" style="align-items: flex-start;height:200px;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>align-items: flex-end; </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo boxborder" style="align-items: flex-end;height:200px;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>/* 第三代垂直居中,交叉轴的中点对齐 */</p>
+							<p>align-items: center; </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo boxborder" style="align-items: center;height:200px;">
+							<div class="item" style="width:100px">width:100px;</div>
+							<div class="item" style="width:100px">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>align-items: baseline;(项目的第一行文字的基线对齐)</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo boxborder" style="align-items: baseline;height:200px;">
+							<div class="item" style="width:100px;font-size:12px;">width:100px;</div>
+							<div class="item" style="width:160px;font-size: 25px;">width:100px;</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>align-items: stretch;/*default*/ </p>
+							<p>display: -webkit-flex;</p>
+							<p>默认值stretch，如果项目未设置高度或设为auto，将占满整个容器的高度</p>
+						</div>
+						<div class="demo boxborder" style="align-items: stretch;height:200px;">
+							<div class="item" style="width:100px; height:100px;">height:100px;</div>
+							<div class="item" style="width:150px; min-height:20px;">min-height:20px;</div>
+							<div class="item" style="width:150px; max-height:60px;">max-height:60px;</div>
+						</div>
+					</div>
+				</div>
+
+				<h3><a name="align-content"></a>[ align-content ]:定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。</h3>
+				<ul>
+					<li><code>flex-start</code>：与交叉轴的起点对齐。</li>
+					<li><code>flex-end</code>：与交叉轴的终点对齐。</li>
+					<li><code>center</code>：与交叉轴的中点对齐。</li>
+					<li><code>space-between</code>：与交叉轴两端对齐，轴线之间的间隔平均分布。</li>
+					<li><code>space-around</code>：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。</li>
+					<li><code>stretch</code>（默认值）：轴线占满整个交叉轴。</li>
+				</ul>
+				<div class="boxes">
+					<div class="box">
+						<div class="boxstyle">
+							<p>/* <span style="color:red"> 对比 align-items</span>*/</p>
+							<p>align-items: flex-start</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="align-items: flex-start">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" >d</div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>align-content: flex-start; /*与交叉轴的起点对齐*/</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="align-content: flex-start;">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" >d</div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+
+						</div>
+					</div>
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>align-content: flex-end; /*与交叉轴的终点对齐*/</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="align-content: flex-end;">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" >d</div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+
+						</div>
+					</div>
+					<div class="box">
+						<div class="boxstyle">
+							<p>align-content: center; /*与交叉轴的中点对齐*/</p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="align-content: center;">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" >d</div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+
+						</div>
+					</div>
+					<div class="box">
+						<aside>/*与交叉轴两端对齐，轴线之间的间隔平均分布。*/</aside>
+						<div class="boxstyle">
+
+							<p>align-content: space-between; </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="align-content: space-between;">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" >d</div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+						</div>
+					</div>
+					<div class="box">
+						<div class="boxstyle">
+							<p>/*每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。*/</p>
+							<p>align-content: space-around; </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="align-content: space-around;">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" >d</div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+
+						</div>
+					</div>		
+
+					<div class="box">
+						<div class="boxstyle">
+							<p>轴线占满整个交叉轴。</p>
+							<p>align-content: stretch; /*default*/ </p>
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="align-content: stretch;">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" >d</div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+
+						</div>
+					</div>	
+
+				</div>	
+
+				<hr>
+				<h3>以下6个属性设置在项目上:</h3>
+				<hr>
+
+				<h3><a name="align-self"></a>[ align-self ] :align-self属性允许单个项目有与其他项目不一样的对齐方式，可覆盖align-items属性。</h3>
+				<ul><li>默认值为auto，表示继承父元素的align-items属性</li><li>如果没有父元素，则等同于stretch。</li>
+					<li>
+						.item {
+						align-self: auto | flex-start | flex-end | center | baseline | stretch;
+					}
+				</li></ul>
+				
+				<div class="boxes">
+					<div class="box" style="width:1000px;">
+						<div class="boxstyle">
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo boxborder" style="width: 1000px; height:200px;">
+							<div class="item" style="width:200px; align-self:flex-start;">align-self:flex-start;</div>
+							<div class="item" style="width:200px; align-self:flex-end;">align-self:flex-end;</div>
+							<div class="item" style="width:200px; align-self:center;">align-self:center;</div>
+							<div class="item" style="width:200px; align-self:auto;">
+								<span>align-self:auto;</span>
+								<span>/*default */</span>
+							</div>
+
+							<div class="item" style="width:200px; align-self:baseline;">align-self:baseline;</div>
+							<div class="item" style="width:200px; align-self:stretch;">align-self:stretch;</div>
+						</div>
+					</div>
+				</div>
+
+
+
+
+				<h3><a name="order"></a>[ order ]:定义项目的排列顺序。数值越小，排列越靠前，默认为0</h3>
+				<div class="boxes">
+					<div class="box" style="width:1000px;">
+						<div class="boxstyle">
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-align-content" style="width: 1000px;height:40px;">
+							<div class="item" >a</div>
+							<div class="item" >b</div>
+							<div class="item" >c</div>
+							<div class="item" style="order:-1; width:120px"> d (order:-1) </div>
+							<div class="item" >e</div>
+							<div class="item" >f</div>
+						</div>
+					</div>
+				</div>
+
+				<h3><a name="flex-grow"></a>[ flex-grow ]定义项目的放大比例，默认为0，即如果存在剩余空间，也不放大。</h3>
+				<ul><li>如果所有项目的flex-grow属性都为1，则它们将等分剩余空间（如果有的话）。</li>
+					<li>如果一个项目的flex-grow属性为2，其他项目都为1，则前者占据的剩余空间将比其他项多一倍。</li>
+				</ul>
+				<div class="boxes">
+					<div class="box" style="width:1000px;">
+						<div class="boxstyle">
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-flex-grow">
+							<div class="item" style="flex-grow:2" >flex-grow:2</div>
+							<div class="item" >flex-grow:1</div>
+							<div class="item" >flex-grow:1</div>
+							
+						</div>
+					</div>
+				</div>
+
+
+				<h3><a name="flex-shrink"></a>[ flex-shrink ]: 属性定义了项目的缩小比例，默认为1，即如果空间不足，该项目将缩小。</h3>
+				<ul><li>如果所有项目的flex-shrink属性都为1，当空间不足时，都将等比例缩小。</li>
+					<li>如果一个项目的flex-shrink属性为0，其他项目都为1，则空间不足时，前者不缩小</li>
+				</ul>
+				<div class="boxes">
+					<div class="box" style="width:1000px;">
+						<div class="boxstyle">
+							<p>display: -webkit-flex;</p>
+						</div>
+						<div class="demo demo-flex-shrink">
+							<div class="item" style="flex-shrink:0" >flex-shrink:0</div>
+							<div class="item" >flex-shrink:1</div>
+							<div class="item" >flex-shrink:1</div>
+							<div class="item" >flex-shrink:1</div>
+							<div class="item" >flex-shrink:1</div>
+							<div class="item" >flex-shrink:1</div>
+							<div class="item" >flex-shrink:1</div>
+						</div>
+					</div>
+				</div>
+
+				<h3><a name="flex-basis"></a>[ flex-basis ] : flex-basis属性定义了在分配多余空间之前，项目占据的主轴空间（main size）。浏览器根据这个属性，计算主轴是否有多余空间。</h3>
+				<ul><li>它的默认值为auto，即项目的本来大小。
+					.item {flex-basis:<length> | auto;/* default auto */}
+				</li>
+				<li>它可以设为跟width或height属性一样的值（比如350px），则项目将占据固定空间。</li>
+			</ul>
+			<div class="boxes">
+				<div class="box" style="width:1000px;">
+					<div class="boxstyle">
+						<p>display: -webkit-flex;</p>
+					</div>
+					<div class="demo demo-flex-basis">
+						<div class="item" style="flex-basis:100px" >flex-basis:100px</div>
+						<div class="item" style="flex-grow:1">flex-grow:1</div>
+
+					</div>
+				</div>
+			</div>
+
+
+			<h3><a name="flex"></a>[ flex ] :flex属性是flex-grow, flex-shrink 和 flex-basis的简写，默认值为0 1 auto。后两个属性可选。</h3>
+
+				<ul><li>.item {
+  flex: none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]
+}
+				</li>
+				<li>该属性有两个快捷值：auto (1 1 auto) 和 none (0 0 auto)</li>
+				<li>建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值。</li>
+			</ul>
+			<div class="boxes">
+				<div class="box" style="width:1000px;">
+					<div class="boxstyle">
+						<p>display: -webkit-flex;</p>
+					</div>
+					<div class="demo demo-flex-basis">
+						<div class="item" style="flex:auto" >flex:auto</div>
+						<div class="item" style="flex:none">flex:none</div>
+
+					</div>
+				</div>
+			</div>
+
+
+		</section>
+
+
+	</body>
+	</html>
