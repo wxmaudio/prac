@@ -1,6 +1,6 @@
 (function(window,undefined){
   var tpl = '<video id="preview-{index}" controls class="{uiClass}" data-custom="{customData}">\n'+
-  '         <source src="{src}" type="video/mp4"></source></video>\n'+
+  '         <source src="{src}" type="{type}"></source></video>\n'+
   '       <div class="file-caption" title="{filename}">{filename}</div>\n';
   var index = 0;
 
@@ -27,6 +27,7 @@
       var id = uniqId(),
       html = tpl.replace(/\{src}/g, url)
       .replace(/\{filename}/g, file.name)
+      .replace(/\{type}/g, file.type)
       .replace(/\{index}/g,id)
       .replace(/\{customData}/g,customData);
 
