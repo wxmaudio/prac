@@ -2,7 +2,7 @@
 * 稿件位置管理类
 * @class PositionManager
 * @static
-* @author wxmaudio
+* @author wuxiumei@chinaso.com
  */
 var PositionManager = (function(ctx){
     /**
@@ -108,7 +108,7 @@ var PositionManager = (function(ctx){
         var temp,tempIndex;
         function isFixed(index){
             return (fixedIndexArr.length >0 
-                && fixedIndexArr.indexOf(fromIndex) != -1);
+                && fixedIndexArr.indexOf(index) != -1);
         }
 
         //越界或不能移动则返回null
@@ -184,7 +184,6 @@ var PositionManager = (function(ctx){
             indexs : indexArr
         }
     }
-
 
     return {
         ifSortUsed : checkSortIfUsed,
