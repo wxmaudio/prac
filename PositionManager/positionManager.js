@@ -185,6 +185,18 @@ var PositionManager = (function(ctx){
         }
     }
 
+    //TODO:数组乱序
+    var a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    sign = 1; 
+a.sort(function(a, b) {
+    //因为Math.random产生的数在0-1之间
+    //所以0.5两边的概率是相等的
+    //大于0.5时为升序，小于0.5时为降序
+    sign = (Math.random() > 0.5) ? 1 : -1;
+    return (a - b) * sign;
+
+});
+
     return {
         ifSortUsed : checkSortIfUsed,
         getMovedSequence : getMovedSequence

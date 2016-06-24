@@ -13,6 +13,6 @@ function getRangeRandom(x,y){
    * 获取 0~30° 之间的一个任意正负值
    * @return {String}
    */
-function get30DegRandom(deg){
+function get30DegRandom(){
      return ((Math.random()>0.5)? '' :'-') + Math.ceil(Math.random()*30);
 }
