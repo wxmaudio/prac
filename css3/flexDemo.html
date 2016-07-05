@@ -146,6 +146,17 @@
 		.demo-flex-shrink .item{
 			flex-shrink:1;
 		}
+
+		.goTop{
+			position: fixed;
+			padding: 10px;
+			color: #fff;
+			width: 20px;
+			background-color: #37B0D3;
+			right: 0px;
+			bottom: 200px;
+			cursor:pointer;
+		}
 	</style>
 </head>
 <body>
@@ -167,6 +178,7 @@
 		<div><a href="#flex">flex</a></div>
 		
 	</nav>
+	
 	<section class="content">
 
 		<h3>[ flex ]</h3>
@@ -692,5 +704,12 @@
 		</section>
 
 
+<section class="goTop">回到顶部</section>
+<script type="text/javascript">
+	var goTop = document.querySelector('.goTop');
+	goTop && (goTop.onclick = function () {
+		window.scrollTo(0,0);
+	})
+</script>
 	</body>
 	</html>
