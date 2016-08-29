@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+</head>
+<body>
+<canvas id="canvas" style="border:1px solid #aaa;display:block;margin:50px auto">
+不支持canvas
+</canvas>
+<script type="text/javascript">
+
+	window.onload= function () {
+		var canvas = document.getElementById('canvas');
+
+		canvas.width= 1024;
+		canvas.height = 768;
+
+		var ctx = canvas.getContext("2d");
+
+		//直线
+		//状态设置
+		ctx.moveTo(100, 100);
+		//绘制每个顶点的坐标
+		ctx.lineTo(700,700);
+		ctx.lineTo(100,700);
+		ctx.lineTo(100,100);
+		
+
+
+		//绘制线条、边框
+		ctx.lineWidth = 5;//设直线条宽度
+		ctx.strokeStyle = "#005588";//设置样式，如颜色red
+		ctx.stroke();
+		
+		//着色
+		ctx.fillStyle = "rgb(2,100,300)";
+		ctx.fill();
+
+
+		
+	}
+
+	function render(ctx){
+		
+	}
+
+	function update(){
+		
+	}
+</script>
+</body>
+</html>
