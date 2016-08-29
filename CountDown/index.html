@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+</head>
+<body>
+      <style>
+        /* common star */   
+            ol,ul,li{list-style:none}
+            #boxMidAutumnLeftA .clearfix:after{  display:block;clear:both;content:'.';height:0;visibility:hidden;font-size:0;}
+            #boxMidAutumnLeftA .clearfix{zoom:1;}
+            #boxMidAutumnLeftA { color:#222; font-family:Arial; word-wrap:break-word;word-break:break-all; margin-bottom:16px; font-size:13px;}
+            #boxMidAutumnLeftA h2{margin-bottom:5px; font:16px/1.5 Arial,"宋体";color:#333;}
+            #boxMidAutumnLeftA .reBox{border:1px solid #f1e476;border-bottom-width:1px;}
+            #boxMidAutumnLeftA h2 a:link,#boxMidAutumnLeftA  h2 a:visited,#boxMidAutumnLeftA h2 a:hover,#boxMidAutumnLeftA h2 a em{ text-decoration:underline; }
+            #boxMidAutumnLeftA em { color: #c9146c; }
+            #boxMidAutumnLeftA .fl { float: left; }
+            #boxMidAutumnLeftA .fr { float: right; }
+            #boxMidAutumnLeftA .hide{ display:none;}
+            #boxMidAutumnLeftA ol,#boxMidAutumnLeftA ul { list-style: outside none none; }
+          /**/
+          #boxMidAutumnLeftA .sevenDayBoxCon{ background:url(../images/se/bg/bgMidAutumnbox.jpg) no-repeat 0 0; height:203px; padding:10px 170px 0 10px; position:relative; color:#fff;}
+          #boxMidAutumnLeftA .titleSevenDayBoxH4{ float:left; color:#fff; font-size:56px; font-weight:500; line-height:70px; margin-right:15px; width:185px; height:85px;}
+          #boxMidAutumnLeftA .sevenDayBoxDate{ font-size:16px; color:#c9146c; line-height:22px; font-weight: bold;}
+          #boxMidAutumnLeftA .sevenDayBoxItem{ margin:10px 0 0 0;}
+          #boxMidAutumnLeftA .pNameSevenDay{ line-height:20px; color:#fff;}
+          #boxMidAutumnLeftA .pNameSevenDay a:link,#boxMidAutumnLeftA .pNameSevenDay a:visited,#boxMidAutumnLeftA .pNameSevenDay a:hover{ color:#fff!important; text-decoration:none;}
+          #boxMidAutumnLeftA .pNameSevenDayBot{ position:absolute; bottom:2px; left:10px; height:30px; line-height:30px; color:#35383d;}
+          #boxMidAutumnLeftA .linePoint{ display: inline-block; width:1px; height:13px; vertical-align:middle; margin:0 10px; color:#fff; overflow:hidden; background:#fff;}
+          #boxMidAutumnLeftA .pNameSevenDayBot a{  color:#fff!important; text-decoration:none;}
+          </style>
+          <li class="reItem">
+            <div id="boxMidAutumnLeftA">
+              <div class="reBox clearfix sevenDayBox">
+                <div class="sevenDayBoxCon clearfix">
+                    <div class="sevenDayBoxItem clearfix">
+                        <div class="titleSevenDayBoxH4"></div>
+                        <div class="sevenDayBoxDate">2016年8月9日<br>
+    农历七月七 星期二<br>
+    <span id="jDiffDayWrapper">距离中秋节还有<em id="jDiffDay">0</em></span>天</div>
+                    </div>
+                    <p class="pNameSevenDay">也称月夕、仲秋节、八月节、八月会、追月节、玩月节、拜月节、女儿节或团圆节，是流行于中国众多民族与亚诸国中的传统文化节日。 <a href="#">详情&gt;&gt;</a></p>
+                    <p class="pNameSevenDayBot"><a href="#" target="_blank">节日起源</a><span class="linePoint"></span><a href="#" target="_blank">节日别称</a><span class="linePoint"></span><a href="#" target="_blank">神话传说</a><span class="linePoint"></span><a href="#" target="_blank">风俗习惯</a></p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <script>
+            (function(){
+/**
+ * 倒计时，计算现在距离未来某个时间还有多长时间
+ * @param  {Date | string} current 当前时间
+ * @param  {Date | string} future  未来时间
+ * @return {Object} 时间对象
+ * @example
+ * getDiffTime(new Date(),new Date(2016,8,26,17,18,0));
+ *  {
+     days : days,
+     hours : hours,
+     minutes : minutes,
+     seconds : seconds
+    }
+ */
+function getDiffTime(current, future) {
+   try{
+       if(typeof current !== "object"){
+           current = new Date(current);
+       }
+       if(typeof future !== "object"){
+           future = new Date(future);
+       }
+   }catch(e){
+      return null;
+   }
+   console.log(current.toLocaleString());
+   console.log(future.toLocaleString());
+   //现在距离未来某个时间还有多少秒
+   var diff = Math.round((future.getTime() - current.getTime())/1000),
+       days = 0,
+       hours = 0,
+       minutes = 0,
+       seconds = 0;
+   
+   //未来时间小于当前时间,差异时间变为0
+   if(diff < 0){
+      return null;
+   }
+
+   days = Math.floor(diff / (24 * 60 * 60));
+   diff = diff % (24 * 60 * 60);
+   hours = Math.floor(diff / (60 * 60));
+   diff = diff % (60 * 60);
+   minutes = Math.floor(diff / 60);
+   seconds = diff % 60;
+
+   return {
+     days : days,
+     hours : hours,
+     minutes : minutes,
+     seconds : seconds
+   }
+}
+
+
+function renderDiffDay(current, future , dayId ,wrapId){
+   var d = getDiffTime(current,future),
+       day = document.getElementById(dayId),
+       wrapper = document.getElementById(wrapId);
+    if(!d){
+       wrapper && (wrapper.style.display = "none");
+    }else{
+       day && (day.innerHTML = d.days);
+    }
+    return d;
+}
+ window.CountDown = window.CountDown || {};
+ window.CountDown.getDiffTime = getDiffTime;
+ window.CountDown.renderDay = renderDiffDay;
+})();
+
+//invoke
+CountDown.renderDay(new Date(),new Date(2016,7,27,17,18,0), "jDiffDay", "jDiffDayWrapper");
+
+</script>
+</body>
+</html>

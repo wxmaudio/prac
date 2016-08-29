@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+	<style type="text/css">
+		html,body{width:100%;height:100%;
+		  padding:0; margin:0;
+		}
+		.container{
+		  background-color:#eeeeee;
+		  width:100%;
+		  height:100%;
+		  display:flex;
+		  align-items: center;
+		  flex-flow: row wrap;
+		}
+		.row{
+			padding: 10px;
+    		margin: 5px;
+    		flex-direction: row;
+    		align-items: center;
+    		align-self: stretch;
+    		flex: 1 100%;
+		}
+		.button-inline{
+			flex:1 auto;
+		}
+		input[type='text']{
+			flex:4 auto;
+		}
+		.button{
+			flex-direction: row;
+		    align-items: center;
+		    align-self: stretch; 
+		    height:36px;
+		    flex: 1 100%;
+		    margin: 10px;   
+		}
+
+	</style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+	<input type="text"/>
+	<input type="button" class="button-inline" value="search" name="" />
+ 	</div>
+  	<input type="button" class="button" name="" class="" value="location">
+</div>
+
+<style>
+	.parent{display: flex;height: 300px;}
+	.child{width:100px; height: 100px; background-color: red;margin: auto;}
+
+</style>
+<div class="parent">
+	
+	<div class="child">垂直居中</div>
+</div>
+</body>
+</html>
