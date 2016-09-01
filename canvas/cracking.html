@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<style type="text/css">
+   .left{
+    -moz-transform-origin:left top;
+    -webkit-transform-origin:left top;
+    -ms-transform-origin:left top;
+    -o-transform-origin:left top;
+   	transform-origin:left top;
+   	width:200px;
+   	height: 200px;
+   	float: left;
+   	background-color: red;
+       /* IE8+ - must be on one line, unfortunately */ 
+   -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.9659258262890683, M12=-0.2588190451025207, M21=0.2588190451025207, M22=0.9659258262890683, SizingMethod='auto expand')";
+   
+   /* IE6 and 7 */ 
+   filter: progid:DXImageTransform.Microsoft.Matrix(
+            M11=0.9659258262890683,
+            M12=-0.2588190451025207,
+            M21=0.2588190451025207,
+            M22=0.9659258262890683,
+            SizingMethod='auto expand');
+   }
+    .right{
+    -moz-transform-origin:right top;
+    -webkit-transform-origin:right top;
+    -ms-transform-origin:right top;
+    -o-transform-origin:right top;
+    transform-origin:right top;
+   	width:200px;
+   	height: 200px;
+   	float: left;
+   	background-color: blue;
+   }
+   .ball{
+   	border-radius: 50px;
+    width:50px;
+    height: 50px;
+    position: absolute;
+    background-color: gray;
+    top:-50px;
+    left: 185px;
+   }
+	</style>
+</head>
+<body>
+<div class="left" id="t1">wewr</div>
+<div class="right" id="t2">2222</div>
+<div class="ball" id="ball"></div>
+
+<script type="text/javascript" src="js/commonFunctions.js"></script>
+<script type="text/javascript">
+	var deg = 0,
+      degMax = 45,
+      topPos = -100,
+      topMax = 100,
+      stop = false,
+      leftObj = document.getElementById('t1'),
+      rightObj = document.getElementById('t2');
+
+var Ball = function(){
+  this.ball = {
+    w : 50,
+    h : 50,
+    r : 25,
+    x : 0,
+    y : -50,
+    vx : 0,
+    vy : 0,
+    a : 1,//加速度
+    rangeX : [0,0],
+    rangeY : [-50,100],
+    dom : document.getElementById('ball')
+  }
+}
+Ball.prototype.update = function(){
+    var ball = this.ball;
+    ball.y += ball.vy;
+    ball.vy += ball.a;
+
+    if(ball.y > ball.rangeY[1] - ball.r){
+      ball.vy = -ball.vy*0.7;//0.7为摩擦因子
+      if(Math.abs(ball.vy) < 1){
+        ball.vy = 0;
+        return false;//停止更新
+      }
+    }
+    return true;
+  
+}
+
+Ball.prototype.render = function() {
+  var ball = this.ball;
+  if(ball.y < ball.rangeY[1]){
+    ball.dom.style['top'] = ball.y + "px";
+  }
+};
+
+function setRotate(obj,deg){
+   if(!obj) return;
+   var prefix = ['webkit', 'Moz', 'ms', 'O', ''],
+       value = 'rotate('+deg+'deg)',
+       attr = 'Transform';
+   for(var i =  0 ; i < prefix.length ; i ++){
+      if(!prefix[i]){
+        attr = attr.toLowerCase();
+      }
+      obj.style[prefix[i] + attr] = value;
+   }
+}
+
+  function  rotate() {
+   if(deg < degMax){
+     setRotate(leftObj, deg);
+   	 setRotate(rightObj, -deg);
+   	 deg++;	
+   }
+
+   ball.render();
+    if(!ball.update()){
+       stop = true;
+     }
+ 
+   if(!stop){
+    requestAnimFrame(rotate);
+   }
+   
+}
+
+var ball = new Ball();
+(function initAnim(){
+  window.setTimeout( function(){
+    requestAnimFrame(rotate)
+  }, 2000);
+})();
+
+</script>
+</body>
+</html>
