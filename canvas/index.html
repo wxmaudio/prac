@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+</head>
+<body>
+<canvas id="canvas" style="border:1px solid #aaa;display:block;margin:50px auto">
+不支持canvas
+</canvas>
+<script src="./commonFunctions.js"></script>
+<script src="./particle.js"></script>
+<script>
+window.onload= function () {
+	var canvas = document.getElementById('canvas');
+	canvas.width= 1024;
+	canvas.height = 768;
+
+	var ctx = canvas.getContext("2d");
+	var particles = new Particles(20);
+	particles.init(canvas.width, canvas.height);
+    
+    function draw() {
+    	particles.render(ctx);
+    	particles.update();
+
+    	requestAnimFrame(draw);
+    }
+
+    requestAnimFrame(draw);
+    
+}
+</script>
+</body>
+</html>
