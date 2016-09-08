@@ -1,4 +1,4 @@
-//var CSEngine = require('./base');
+//var CSE = require('./base');
 /**
  * 组件基类, 定义组件的生命周期
  */
@@ -18,15 +18,15 @@
         this.parent = null;
 
         // 扩展属性
-        CSEngine.extend(this, cfg);
+        CSE.extend(this, cfg);
     }
     /**
      * 事件定义
      * oninit 初始化
      * ondestory 销毁
      */
-    Component.prototype.oninit = CSEngine.fn;
-    Component.prototype.ondestory = CSEngine.fn;
+    Component.prototype.oninit = CSE.fn;
+    Component.prototype.ondestory = CSE.fn;
 
     /**
      * 组件初始化
@@ -48,5 +48,5 @@
         this.oninit = this.ondestory = null;
     }
 
-    CSEngine.Component = Component;
+    CSE.Component = Component;
 })();

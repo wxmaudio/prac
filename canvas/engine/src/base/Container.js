@@ -1,9 +1,9 @@
-//var CSEngine = require('./base');
+//var CSE = require('./base');
 //var AnimateObj = require('./AnimateObj');
 /**
  * 容器组件基类
  */
- CSEngine.Container = (function(){
+ CSE.Container = (function(){
     var Container = function (cfg) {
         /*
         * 子组件对象数组
@@ -13,7 +13,7 @@
         //调用父类的构造函数
         Container.superclass.constructor.call(this, cfg);
     }
-    CSEngine.inherit(Container, CSEngine.AnimateObj);
+    CSE.inherit(Container, CSE.AnimateObj);
 
     /**
     * 初始化 - 覆盖继承组件的方法
@@ -53,7 +53,7 @@
         //更新子组件
         var childs = this.childs;
         for(var i = 0, len = childs.length; i < len; i++){
-            childs[i].update(deltaTime);
+            childs[i].update.call(childs[i],deltaTime);
         }
 
         Container.superclass.update.call(this, deltaTime);
@@ -65,6 +65,9 @@
      */
     Container.prototype.destroyChilds = function(){
         var childs = this.childs;
+        //若已经销毁，则直接返回
+        if(!childs) return;
+
         for(var i = 0; i < childs.length; i++){
             if(childs[i].initialized){
                 childs[i].destroy();

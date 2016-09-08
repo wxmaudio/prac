@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset='utf-8'>
+</head>
+<body>
+<canvas id="test"></canvas>
+<script type="text/javascript">
+var canvas = document.getElementById('test');
+canvas.width = 320;
+canvas.height = 1126;
+var ctx = canvas.getContext('2d');
+//设置图片阴影
+ctx.shadowBlur = 20;
+//ctx.shadowColor = "rgb(0,0,0)";
+ctx.shadowColor = "#000";
+
+var img = new Image();
+img.src = "bg.jpg";
+
+img.onload = function(){
+//注意这里是ctx才能绘制图片
+	ctx.drawImage(img, 0, 0, 320, 640, 10,10,300, 600);
+}
+
+</script>
+</body>
+
+</html>

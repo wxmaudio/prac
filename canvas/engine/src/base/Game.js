@@ -1,6 +1,6 @@
-//var CSEngine = require('./base');
+//var CSE = require('./base');
 //var Component = require('./Component');
-CSEngine.Game = (function () {
+CSE.Game = (function () {
    var Game = function (cfg) {
     /**
      * read only
@@ -20,16 +20,16 @@ CSEngine.Game = (function () {
     Game.superclass.constructor.call(this, cfg);
 
    }
-   CSEngine.inherit(Game, CSEngine.Component);
+   CSE.inherit(Game, CSE.Component);
    /*
    * Game 事件
    * onstart 开始游戏
    * onpause 暂停游戏
    * onstop 停止游戏
    */
-   Game.prototype.onstart = CSEngine.fn;
-   Game.prototype.onpause = CSEngine.fn;
-   Game.prototype.onstop = CSEngine.fn;
+   Game.prototype.onstart = CSE.fn;
+   Game.prototype.onpause = CSE.fn;
+   Game.prototype.onstop = CSE.fn;
 
    /*
    * 开始游戏
@@ -97,9 +97,9 @@ CSEngine.Game = (function () {
    * 运行游戏
    */
    Game.prototype._run = function(timestamp){
+        this.update(timestamp);
         this.clear();
         this.render();
-        this.update(timestamp);
 
         this._timeout = window.requestAnimationFrame(this._run.bind(this));
    }
@@ -128,7 +128,8 @@ CSEngine.Game = (function () {
    */
    Game.prototype.destroy = function(){
       this.stop();
-    
+      
+      var layers = this.layers;
       if(layers.length > 0){
           for(var i = 0, len = layers.length; i < len; i++ ){
             layers[i].destroy();

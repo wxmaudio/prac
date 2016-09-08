@@ -60,12 +60,13 @@
 		for(var i=foodlist.length-1; i>=0; i--){
 			var f = foodlist[i];
 			if(f){
+				//计算月饼的圆心 与飞船中心的距离
 				var l1 = this.top+this.height/2 - (f.top+f.height/2);
 				var l2 = this.left+this.width/2 - (f.left+f.width/2);
 				var l3 = Math.sqrt(l1*l1 + l2*l2);
-				if(l3<=this.height/2 + f.height/2){
+				if(l3<=this.height/2 + f.height/2){//发生碰撞
 					foodlist[f.id] = null;
-					if(f.type==0){
+					if(f.type==0){//碰到五仁月饼
 						gameMonitor.stop();
 						$('#gameoverPanel').show();
 
@@ -257,6 +258,7 @@ var gameMonitor = {
 			this.bgloop = 0;
 		}
 		this.bgDistance = ++this.bgloop * this.bgSpeed;
+		//循环合成背景
 		ctx.drawImage(this.bg, 0, this.bgDistance-this.bgHeight, this.bgWidth, this.bgHeight);
 		ctx.drawImage(this.bg, 0, this.bgDistance, this.bgWidth, this.bgHeight);
 	},

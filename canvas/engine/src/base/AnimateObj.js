@@ -1,6 +1,6 @@
-//var CSEngine = require('./base');
+//var CSE = require('./base');
 //var Component = require('./Component');
-CSEngine.AnimateObj = (function() {
+CSE.AnimateObj = (function() {
     /**
     * 显示组件基类
     */
@@ -13,6 +13,14 @@ CSEngine.AnimateObj = (function() {
          * 绘制时的y轴位置
          */
         this.y = 0;
+        /*
+        * x轴移动范围
+        */
+        this.rangeX = [-9999,999999];
+        /*
+        * y轴移动范围
+        */
+        this.rangeY = [-9999,999999];
         /*
         * 水平速度
         */
@@ -66,6 +74,10 @@ CSEngine.AnimateObj = (function() {
          * 显示状态
          */
         this.visible = true;
+        /*
+        * 自动通知父级更新
+        */
+        this.autoChange = false;
 
         //调用父类的构造函数
         AnimateObj.superclass.constructor.call(this, cfg);
@@ -74,7 +86,7 @@ CSEngine.AnimateObj = (function() {
     /**
      * 继承自Component类
      */
-    CSEngine.inherit(AnimateObj, CSEngine.Component);
+    CSE.inherit(AnimateObj, CSE.Component);
 
     /**
      * 事件定义
@@ -84,17 +96,24 @@ CSEngine.AnimateObj = (function() {
      * onrender 渲染
      * ondraw 在画布上绘制
      */
-    AnimateObj.prototype.onshow = CSEngine.fn;
-    AnimateObj.prototype.onhide = CSEngine.fn;
-    AnimateObj.prototype.onupdate = CSEngine.fn;
-    AnimateObj.prototype.onrender = CSEngine.fn;
-    AnimateObj.prototype.ondraw = CSEngine.fn;
+    AnimateObj.prototype.onshow = CSE.fn;
+    AnimateObj.prototype.onhide = CSE.fn;
+    AnimateObj.prototype.onupdate = CSE.fn;
+    AnimateObj.prototype.onrender = CSE.fn;
+    AnimateObj.prototype.ondraw = CSE.fn;
 
+    /**
+     * 用户自定义的在画布上绘制逻辑
+     * @param {Context Object} ctx
+     */
+    AnimateObj.prototype.customDraw = function (ctx) {
+    }
     /**
      * 在画布上绘制组件
      * @param {Context Object} ctx
      */
     AnimateObj.prototype.draw = function (ctx) {
+        this.customDraw(ctx);
         this.ondraw();
     }
 
@@ -135,8 +154,7 @@ CSEngine.AnimateObj = (function() {
     * @deltaTime 绘制时间间隔
     */
     AnimateObj.prototype.update = function (deltaTime) {
-        console.log(deltaTime);
-       // 计算移动速度
+        // 计算移动速度
         this.vx = this.vx + this.ax * (deltaTime/1000);
         this.vy = this.vy + this.ay * (deltaTime/1000);
 
@@ -144,6 +162,13 @@ CSEngine.AnimateObj = (function() {
         this.x += this.vx ;
         this.y += this.vy ;
 
+        if(this.x < this.rangeX[0] - this.width || this.x > this.rangeX[1] + this.width
+        && this.y < this.rangeY[0] - this.height || this.y > this.rangeY[1] + this.height){
+            this.visible = false;
+        }
+
+        //若autoChange为true, 自动更新父亲
+        this.autoChange &&  this.parent && this.parent.change && this.parent.change();
         this.onupdate(deltaTime);
     }
 

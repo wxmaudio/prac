@@ -1,7 +1,7 @@
 /**
  * 游戏基类
  */
-CSEngine.Game = (function() {
+CSE.Game = (function() {
 
     var Game = function(cfg) {
 
