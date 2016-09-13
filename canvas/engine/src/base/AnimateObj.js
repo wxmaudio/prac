@@ -46,6 +46,11 @@ CSE.AnimateObj = (function() {
          */
         this.height = 0;
         /**
+         * 半径
+         * 仅在绘制圆形物体时有效
+         */
+        this.radius = 0;
+        /**
          * 透明度
          */
         this.alpha = 1;
@@ -102,17 +107,23 @@ CSE.AnimateObj = (function() {
     AnimateObj.prototype.onrender = CSE.fn;
     AnimateObj.prototype.ondraw = CSE.fn;
 
+    //边界检查
+    AnimateObj.prototype.borderCheck = function (){
+
+    }
     /**
      * 用户自定义的在画布上绘制逻辑
      * @param {Context Object} ctx
      */
     AnimateObj.prototype.customDraw = function (ctx) {
     }
+
     /**
      * 在画布上绘制组件
+     * @private
      * @param {Context Object} ctx
      */
-    AnimateObj.prototype.draw = function (ctx) {
+    AnimateObj.prototype._draw = function (ctx) {
         this.customDraw(ctx);
         this.ondraw();
     }
@@ -141,7 +152,7 @@ CSE.AnimateObj = (function() {
 
         //画布变形处理
         this._transform(ctx);
-        this.draw(ctx);
+        this._draw(ctx);
 
         //恢复画布状态
         ctx.restore();

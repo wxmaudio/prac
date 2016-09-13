@@ -19,6 +19,7 @@
             }
             image.src = item.src;
         },
+
         /**
          * 加载图片资源
          * @param {Array} images @format {id: '', src: ''}
@@ -41,6 +42,8 @@
             return this.__loadList[id];
         }
     }
+
+
 
     my.ImageManager = ImageManager;
 })();

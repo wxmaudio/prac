@@ -44,7 +44,7 @@
             this.parent = null;
         }
         
-        this.ondestory();
+        this.ondestory && this.ondestory();
         this.oninit = this.ondestory = null;
     }
 

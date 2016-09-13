@@ -32,17 +32,17 @@
     }
 
     /*
-    * 绘制组件
+    * 渲染组件
     * @param {Context Object} ctx
     */
-    Container.prototype.draw = function (ctx) {
+    Container.prototype.render = function (ctx) {
         //绘制子组件
         var childs = this.childs;
         for(var i = 0, len = childs.length; i < len; i++){
-            childs[i].draw(ctx);
+            childs[i].render(ctx);
         }
 
-        Container.superclass.draw.call(this, ctx);
+        Container.superclass.render.call(this, ctx);
     }
 
     /*
@@ -74,6 +74,7 @@
             }   
         }
     }
+
     /**
      * 销毁组件-覆盖继承组件的方法
      */
@@ -83,7 +84,7 @@
         //删除引用
         this.childs = null;
         //调用继承组件销毁方法
-        Container.superclass.destroy.call(this);
+        //Container.superclass.destroy.call(this);
     }
 
     Container.prototype.appendChild = function(child){

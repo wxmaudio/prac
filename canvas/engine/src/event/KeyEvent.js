@@ -138,5 +138,5 @@
         return !!KeyEvent.__keyDownMap[code];
     }
 
-    my.KeyEvent = KeyEvent;
+    CSE.KeyEvent = KeyEvent;
 })();

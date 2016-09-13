@@ -44,9 +44,19 @@ CSE.Game = (function () {
    }
 
    /*
+   * 重新开始
+   */
+   Game.prototype.restart = function(){
+      this.clear();
+      this.start();
+   }
+
+   /*
    * 设置游戏画布层
    */
    Game.prototype.addLayer = function(obj){
+      !this.layers && (this.layers = []);
+
       this.layers.push(obj);
    }
   
@@ -56,7 +66,7 @@ CSE.Game = (function () {
    Game.prototype.clear = function(){
       var layers = this.layers;
 
-      if(layers.length > 0){  
+      if(layers && layers.length > 0){  
           for(var i = 0, len = layers.length; i < len; i++ ){
             layers[i].clear();
           }
@@ -69,7 +79,7 @@ CSE.Game = (function () {
     Game.prototype.render = function() {
       var layers = this.layers;
 
-      if(layers.length > 0){
+      if(layers && layers.length > 0){
             for(var i = 0, len = layers.length; i < len; i++ ){
               layers[i].render();
             }
@@ -83,7 +93,7 @@ CSE.Game = (function () {
     Game.prototype.update = function(timestamp) {
       var layers = this.layers;
 
-      if(layers.length > 0){
+      if(layers && layers.length > 0){
             for(var i = 0, len = layers.length; i < len; i++ ){
               layers[i].update(timestamp);
             }
@@ -128,9 +138,10 @@ CSE.Game = (function () {
    */
    Game.prototype.destroy = function(){
       this.stop();
-      
+      this.clear();
+
       var layers = this.layers;
-      if(layers.length > 0){
+      if(layers && layers.length > 0){
           for(var i = 0, len = layers.length; i < len; i++ ){
             layers[i].destroy();
           }

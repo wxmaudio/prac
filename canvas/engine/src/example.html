@@ -1,140 +1,46 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title></title>
-	<meta charset="utf-8">
-	<style type="text/css">
-	#gameCanvas canvas {
-	    position: absolute;
-	    left: 0px;
-	    top: 0px;
-	    border:1px solid #aaa;display:block;margin:50px auto;
-	}
-	</style>
+    <title></title>
+    <meta charset="utf-8">
+    <style type="text/css">
+    #gameCanvas canvas {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        border: 1px solid #aaa;
+        display: block;
+        margin: 50px auto;
+    }
+    </style>
 </head>
+
 <body>
-<div id="gameCanvas">
-<canvas id="bg"></canvas>
-<canvas id="canvas">
-不支持canvas
-</canvas>
-</div>
-<input type="button" onclick = "game.start();" value="开始">
-<input type="button" onclick = "game.stop();" value="停止">
-<input type="button" onclick = "game.destroy();" value="销毁">
-
-<script src="./base/base.js"></script>
-<script src="./base/requestAnimationFrame.js"></script>
-<script src="./base/Component.js"></script>
-<script src="./base/AnimateObj.js"></script>
-<script src="./base/Container.js"></script>
-<script src="./base/layer.js"></script>
-<script src="./base/Game.js"></script>
-
-<script src="./component/Background.js"></script>
-<script src="./component/Player.js"></script>
-<script>
-var bgWidth = 320;
-var bgHeight = 568;
-//绘制背景
-var bgLayer = new CSE.Layer({canvas: "bg"});
-var bgctx = bgLayer.context;
-bgLayer.canvas.width = bgWidth;
-bgLayer.canvas.height = bgHeight;
-
-
-var img = new Image();
-
-img.src = "./images/bg.jpg";
-
-img.onload = function(){
-	bgctx.drawImage(img, 0, 0);
-}
-
-var bg = getMovingBg(img, 320, 1126, 1, true);
-bgLayer.appendChild(bg);
-
-
-//绘制小球
-var layer = new CSE.Layer();
-var canvas = layer.setCanvas("canvas");
-var playctx = layer.context;
-canvas.width = 320;
-canvas.height = 568;
-
-var particleNum = 15;
-
-for(var i = 0; i < particleNum ; i ++){
-
-	var particle = new CSE.AnimateObj({
-		x : Math.round(canvas.width * Math.random()),
-		y : 0,
-		rangeX : [0, canvas.width],
-		rangeY : [0, canvas.height],
-		vy : 2 * Math.random(),//垂直向下运动
-		vx : 0, //垂直向上运动
-		r : 10,//半径大小
-		width : 20,
-		height : 20,
-		color : "#005588",
-		autoChange : true
-	});
-	particle.customDraw = function (ctx) {
-		var t = this;
-
-		ctx.beginPath();
-		ctx.fillStyle = t.color;
-		ctx.arc(t.x, t.y, t.r, 0, 2*Math.PI, true);
-		ctx.closePath();
-    	ctx.fill();
-	}
-
-	layer.appendChild(particle);
-}
-
-//循环利用节点池中的节点
-layer.onupdate = function(){
-	var alive = 0, hideIndexs = [];
-	layer.childs.forEach(function(child, i){
-		if(child.visible){
-			alive++;
-		}else{
-			hideIndexs.push(i);
-		}
-	});
-	//向屏幕中产生新节点
-	if(alive < 10 && hideIndexs.length > 0){
-		var index = hideIndexs.shift(),child;
-		child = layer.childs[index];
-
-		child.x = Math.round(canvas.width * Math.random());
-		child.y = 0;
-		child.visible = true;
-	}
-}
-
-//绘制玩家
-var img = new Image();
-
-img.src = "./images/player.png";
-
-img.onload = function(){
-	playctx.drawImage(img, 0, 0);
-}
-var player = new CSE.Player({
-   img : img,
-   x : canvas.width/2,
-   y : canvas.height/2
-});
-
-player.addControl();
-
-layer.appendChild(player);
-
-var game = new CSE.Game();
-game.addLayer(bgLayer);
-game.addLayer(layer);
-
-</script>
+    <div id="gameCanvas">
+        <canvas id="bg" width="320" height="680"></canvas>
+        <canvas id="canvas" width="320" height="680">
+            不支持canvas
+        </canvas>
+    </div>
+    <div id="operation" style="display:none;">
+        <input type="button" id="start" value="开始">
+        <input type="button" id="stop" value="停止">
+        <input type="button" id="destroy" value="销毁">
+    </div>
+    <div>吃了<span id="number">0</span>个</div>
+    <script src="./base/base.js"></script>
+    <script src="./base/requestAnimationFrame.js"></script>
+    <script src="./base/utils.js"></script>
+    <script src="./base/ImageLoader.js"></script>
+    <script src="./base/Component.js"></script>
+    <script src="./base/AnimateObj.js"></script>
+    <script src="./base/Container.js"></script>
+    <script src="./base/layer.js"></script>
+    <script src="./base/Game.js"></script>
+    <script src="./component/Background.js"></script>
+    <script src="./component/Player.js"></script>
+    <script src="./main.js"></script>
 </body>
+
 </html>

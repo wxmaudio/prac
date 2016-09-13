@@ -1,7 +1,6 @@
 /**
 * 绘制移动背景层
 * 支持水平和垂直两种移动方式
-* @
 */
 window.getMovingBg = (function () {
 var getMovingBg = function (img, width, height, speed, isVertical){
@@ -32,7 +31,7 @@ var getMovingBg = function (img, width, height, speed, isVertical){
 });
 
 /*
-*背景滚动，只支持水平或垂直滚动
+* 背景滚动，只支持水平或垂直滚动
 */
 bg.customDraw = function(ctx){
 	//向上运动，调整因子r为-1；向下运动，调整因子为1
