@@ -5,27 +5,13 @@
     <title></title>
     <meta charset="utf-8">
     <style type="text/css">
-    body {
-        background-color: #000018;
-        font-family: '微软雅黑';
-    }
-    html, body {
-        height: 100%;
-        position: relative;
-        margin: 0;
-        overflow: hidden;
-        -webkit-user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    
     #gameCanvas canvas {
         position: absolute;
         left: 0px;
         top: 0px;
         border: 1px solid #aaa;
         display: block;
-        margin: 100px auto;
+        margin: 50px auto;
     }
     </style>
 </head>
@@ -42,7 +28,6 @@
         <input type="button" id="stop" value="停止">
         <input type="button" id="destroy" value="销毁">
     </div>
-    <div>游戏加载进度：<span id="loadProgress">0</span>%</div>
     <div>吃了<span id="number">0</span>个</div>
     <script src="./base/base.js"></script>
     <script src="./base/requestAnimationFrame.js"></script>

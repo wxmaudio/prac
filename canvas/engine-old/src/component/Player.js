@@ -75,10 +75,6 @@ Player.prototype._insideBoundary = function() {
 
 }
 
-/**
- * 设置玩家位置
- * @param {Event} 事件对象e
- */
 Player.prototype.setPosition = function(e){
     this.x = e.clientX - this.width/2;
     this.y = e.clientY - this.height/2;

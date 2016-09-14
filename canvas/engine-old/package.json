@@ -1,0 +1,11 @@
+{
+  "name": "CSE",
+  "version": "1.0.0",
+  "description": "A animation engine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wuxiumei",
+  "license": "ISC"
+}
