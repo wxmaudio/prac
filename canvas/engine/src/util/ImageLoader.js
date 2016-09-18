@@ -24,7 +24,6 @@ function loadOneImage(url, callback, key){
    }
 
    var img = new Image();
-   var allLoad = false;
 
    img.src = url;
 

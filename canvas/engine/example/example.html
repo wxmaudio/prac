@@ -5,45 +5,67 @@
     <title></title>
     <meta charset="utf-8">
     <style type="text/css">
-    #gameCanvas canvas {
+    html,
+    body {
+        height: 100%;
+        position: relative;
+        margin: 0;
+        overflow: hidden;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+        background-color: #000018;
+        font-family: '微软雅黑';
+    }
+    
+    #gamePannel {
+        width: 320px;
+        margin: 0 auto;
+        height: 568px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    #gamePannel canvas {
         position: absolute;
         left: 0px;
         top: 0px;
-        border: 1px solid #aaa;
-        display: block;
-        margin: 100px auto;
+    }
+    
+    #loading,
+    #operation {
+        color: white;
+        position: absolute;
+        right: 0px;
+        top: 10px;
+    }
+    
+    #operation {
+        top: 30px;
+        right: 30px;
     }
     </style>
 </head>
 
 <body>
-    <div id="gameCanvas">
-        <canvas id="bg" width="320" height="680"></canvas>
-        <canvas id="canvas" width="320" height="680">
-            不支持canvas
-        </canvas>
+    <div id="container">
+        <div id="guidePanel"></div>
+        <div id="gamePannel">
+            <canvas id="bg" width="320" height="680"></canvas>
+            <canvas id="main" width="320" height="680">
+                不支持canvas
+            </canvas>
+        </div>
+        <div id="operation" style="display:none;">
+            <input type="button" id="start" value="开始">
+            <input type="button" id="stop" value="停止">
+            <input type="button" id="destroy" value="销毁">
+            <div class="score-wrap">吃了<span id="score">0</span>个</div>
+        </div>
+        <div id="loading">游戏加载进度：<span id="loadProgress">0</span>%</div>
     </div>
-    <div id="operation" style="display:none;">
-        <input type="button" id="start" value="开始">
-        <input type="button" id="stop" value="停止">
-        <input type="button" id="destroy" value="销毁">
-    </div>
-    <div>游戏加载进度：<span id="loadProgress">0</span>%</div>
-    <div>吃了<span id="number">0</span>个</div>
-
-    <script src="../src/util/requestAnimationFrame.js"></script>
-    <script src="../src/util/utils.js"></script>
-    
-    <script src="../src/core/base.js"></script>
-    <script src="../src/core/Component.js"></script>
-    <script src="../src/core/AnimateObj.js"></script>
-    <script src="../src/core/Container.js"></script>
-    <script src="../src/core/layer.js"></script>
-    <script src="../src/core/Game.js"></script>
-
-    <script src="../src/component/Background.js"></script>
-    <script src="../src/component/Player.js"></script>
-
     <script src="../dist/gameBox.js"></script>
 </body>
 

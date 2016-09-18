@@ -1,10 +1,11 @@
+var AnimateObj = require('../core/AnimateObj');
+
 /**
 * 绘制移动背景层
 * 支持水平和垂直两种移动方式
 */
-window.getMovingBg = (function () {
 var getMovingBg = function (img, width, height, speed, isVertical){
-	var bg = new CSE.AnimateObj({
+	var bg = new AnimateObj({
 	//注意这里的宽高设置需要等比例
 	/*
 	* 背景图显示宽度
@@ -67,5 +68,5 @@ bg.update = function(){
 }
  return bg;
 }
-return getMovingBg;
-})();
+
+module.exports = getMovingBg;

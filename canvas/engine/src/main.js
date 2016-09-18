@@ -5,7 +5,10 @@
 var ImageLoader = require('./util/ImageLoader');
 var imageList = require('./resource/image');
 var getParticles = require('./component/Particles');
-
+var Player = require('./component/Player');
+var getMovingBg = require('./component/Background');
+var Game = require('./core/Game');
+var Layer = require('./core/Layer');
 
 /**
  * 加载过程中提示效果
@@ -23,14 +26,14 @@ function loading(loaded, total){
 var score = 0;
 function setScore(){
     score ++;
-    document.getElementById("number").innerHTML = score;
+    document.getElementById("score").innerHTML = score;
 }
 
 /*
 * 初始化游戏背景画布
 */
 function initBgLayer(){
-    var bgLayer = new CSE.Layer({canvas: "bg"});
+    var bgLayer = new Layer({canvas: "bg"});
     var bgctx = bgLayer.context;
     //初始化背景画布图案
     bgctx.drawImage(ImageLoader.get('bg'), 0, 0);
@@ -45,8 +48,8 @@ function initBgLayer(){
 * 绘制游戏主画布
  */
 function initMainLayer(){
-    var layer = new CSE.Layer();
-    var canvas = layer.setCanvas("canvas");
+    var layer = new Layer();
+    var canvas = layer.setCanvas("main");
     var playctx = layer.context;
 
     //绘制小球
@@ -56,7 +59,7 @@ function initMainLayer(){
 
 
     //绘制玩家
-    var player = new CSE.Player({
+    var player = new Player({
        img : ImageLoader.get('player'),
        width : 112,
        height : 106,
@@ -65,7 +68,7 @@ function initMainLayer(){
        y : canvas.height/2 - 40
     });
     //添加游戏鼠标控制
-    player.addControl();
+    player.addControl(document.getElementById('gamePannel'));
     //注册发生碰撞时的回调
     player.onHit = function(target, index){
         target.visible = false;
@@ -111,7 +114,7 @@ function initMainLayer(){
  */
 function initGame(){
     //新建游戏对象
-    var game = new CSE.Game();
+    var game = new Game();
 
     //创建背景画布层
     var bgLayer = initBgLayer();

@@ -1,7 +1,7 @@
 "use strict";
-//var CSE = CSE;
-//var utils = require('./base/utils');
-var AnimateObj = CSE.AnimateObj;
+var CSE = require('../core/base');
+var AnimateObj = require('../core/AnimateObj');
+var utils = require('../util/utils');
 
 var Player = function (cfg) {
     this.width = 113;
@@ -32,8 +32,7 @@ Player.prototype.onHit = function(){};
 /*
 * 用鼠标或手势或键盘控制player
 */
-Player.prototype.addControl = function(){
-    var elem = document.getElementById('gameCanvas');
+Player.prototype.addControl = function(elem){
     var self = this, move = false;
     CSE.addHandler(elem,this.eventType.start,function(e){
         self.setPosition(e);
@@ -80,8 +79,15 @@ Player.prototype._insideBoundary = function() {
  * @param {Event} 事件对象e
  */
 Player.prototype.setPosition = function(e){
-    this.x = e.clientX - this.width/2;
-    this.y = e.clientY - this.height/2;
+    //console.log(e.clientX,"y:",e.clientY);
+    if(CSE.isMobile()){
+        this.x = event.changedTouches[0].clientX - this.width/2;
+        this.y = event.changedTouches[0].clientY - this.height/2;
+    }else{
+        this.x = e.offsetX - this.width/2;
+        this.y = e.offsetY - this.height/2;
+    }
+    
 
     this._insideBoundary();
  
@@ -112,5 +118,4 @@ Player.prototype.customDraw = function(ctx) {
     ctx.drawImage(this.img, this.x, this.y);
 };
 
-CSE.Player = Player;
-//module.exports = Player;
+module.exports = Player;

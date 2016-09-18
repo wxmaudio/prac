@@ -1,10 +1,12 @@
+var AnimateObj = require('../core/AnimateObj');
 var particles = [];
+
 function getParticles (num, width, height) {
 	for(var i = 0; i < num ; i ++){
 	    var colorArr = ["#005588", "#080"];
-	    var scoreArr = [1,2];
+	    //var scoreArr = [1,2];
 	    var type = Math.random()>0.5? 1:0;
-	    var particle = new CSE.AnimateObj({
+	    var particle = new AnimateObj({
 	        index: i,//序号
 	        type : 'particle',//标明孩子节点类型
 	        x : Math.round(width * Math.random()),
