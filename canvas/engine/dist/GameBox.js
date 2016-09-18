@@ -67,10 +67,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ImageLoader = __webpack_require__(2);
 	var imageList = __webpack_require__(3);
 	var getParticles = __webpack_require__(4);
-	var Player = __webpack_require__(6);
-	var getMovingBg = __webpack_require__(8);
-	var Game = __webpack_require__(9);
-	var Layer = __webpack_require__(10);
+	var Player = __webpack_require__(8);
+	var getMovingBg = __webpack_require__(12);
+	var Game = __webpack_require__(13);
+	var Layer = __webpack_require__(15);
 
 	/**
 	 * 加载过程中提示效果
@@ -123,11 +123,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    //绘制玩家
 	    var player = new Player({
 	       img : ImageLoader.get('player'),
+	       canvas : canvas,
 	       width : 112,
 	       height : 106,
 	       radius : 50,//用于碰撞检测
 	       x : canvas.width/2 - 50,
-	       y : canvas.height/2 - 40
+	       y : canvas.height/2 - 40,
+	       vx : 2,
+	       vy : 0
 	    });
 	    //添加游戏鼠标控制
 	    player.addControl(document.getElementById('gamePannel'));
@@ -252,7 +255,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	   }
 
 	   var img = new Image();
-	   var allLoad = false;
 
 	   img.src = url;
 
@@ -381,7 +383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function getParticles (num, width, height) {
 		for(var i = 0; i < num ; i ++){
 		    var colorArr = ["#005588", "#080"];
-		    var scoreArr = [1,2];
+		    //var scoreArr = [1,2];
 		    var type = Math.random()>0.5? 1:0;
 		    var particle = new AnimateObj({
 		        index: i,//序号
@@ -418,8 +420,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CSE = __webpack_require__(13);
-	var Component = __webpack_require__(12);
+	var CSE = __webpack_require__(6);
+	var Component = __webpack_require__(7);
 	/**
 	* 显示组件基类
 	*/
@@ -441,19 +443,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 	    this.rangeY = [-9999,999999];
 	    /*
-	    * 水平速度
+	    * 水平速度, 默认速度为0
 	    */
 	    this.vx = 0;
 	    /*
-	    * 垂直速度
+	    * 垂直速度，默认速度为0
 	    */
 	    this.vy = 0;
 	    /*
-	    * 水平加速度
+	    * 水平加速度，默认加速度为0
 	    */
 	    this.ax = 0;
 	    /*
-	    * 垂直加速度
+	    * 垂直加速度，默认加速度为0
 	    */
 	    this.ay = 0;
 	    /**
@@ -608,12 +610,149 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 6 */
+/***/ function(module, exports) {
+
+	var CSE = {
+	   /**
+	    * 供全局引用的空函数
+	    */
+	    fn : function () {},
+		/**
+	     * 通过原型实现的类继承
+	     * @param {Function} childClass
+	     * @param {Function} parentClass
+	     */
+	    inherit : function(childClass, parentClass) {
+	        var Constructor = new Function();
+	        Constructor.prototype = parentClass.prototype;
+	        childClass.prototype = new Constructor();
+	        childClass.prototype.constructor = childClass;
+	        childClass.superclass = parentClass.prototype;
+
+	        if(childClass.prototype.constructor == Object.prototype.constructor) {
+	            childClass.prototype.constructor = parentClass;
+	        }
+	    },
+	    /**
+	     * 扩展和覆盖一个对象的属性
+	     * @param {Object} obj
+	     * @param {Object} newProperties
+	     */
+	    extend : function(obj, newProperties) {
+	        var key;
+
+	        for(key in newProperties) {
+	            if(newProperties.hasOwnProperty(key)) {
+	                obj[key] = newProperties[key];
+	            }
+	        }
+
+	        return obj;
+	    },
+
+	    addHandler: function(element, type, handler) {
+	            if (element.addEventListener) { /***W3C**/
+	                element.addEventListener(type, handler, false);
+	            } else if (element.attachEvent) { /***IE**/
+	                element.attachEvent("on" + type, handler);
+	            } else {
+	                element["on" + type] = handler;
+	            }
+	        },
+
+	    removeHandler: function(element, type, handler) {
+	        if (element.removeEventListener) {
+	            element.removeEventListener(type, handler, false);
+	        } else if (element.detachEvent) {
+	            element.detachEvent("on" + type, handler);
+	        } else {
+	            element["on" + type] = null;
+	        }
+	    },
+	    isMobile : function(){
+	        var sUserAgent= navigator.userAgent.toLowerCase(),
+	        bIsIpad= sUserAgent.match(/ipad/i) == "ipad",
+	        bIsIphoneOs= sUserAgent.match(/iphone os/i) == "iphone os",
+	        bIsMidp= sUserAgent.match(/midp/i) == "midp",
+	        bIsUc7= sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4",
+	        bIsUc= sUserAgent.match(/ucweb/i) == "ucweb",
+	        bIsAndroid= sUserAgent.match(/android/i) == "android",
+	        bIsCE= sUserAgent.match(/windows ce/i) == "windows ce",
+	        bIsWM= sUserAgent.match(/windows mobile/i) == "windows mobile",
+	        bIsWebview = sUserAgent.match(/webview/i) == "webview";
+	        return (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM);
+	     }
+
+	}
+	module.exports = CSE;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CSE = __webpack_require__(6);
+	/**
+	* 组件基类, 定义组件的生命周期
+	*/
+
+	var Component = function(cfg) {
+
+	    /**
+	     * 初始化状态
+	     */
+	    this.initialized = false;
+
+	    /**
+	     * read only
+	     * 父容器组件
+	     */
+	    this.parent = null;
+
+	    // 扩展属性
+	    CSE.extend(this, cfg);
+	}
+	/**
+	 * 事件定义
+	 * oninit 初始化
+	 * ondestory 销毁
+	 */
+	Component.prototype.oninit = CSE.fn;
+	Component.prototype.ondestory = CSE.fn;
+
+	/**
+	 * 组件初始化
+	 */
+	Component.prototype.init = function() {
+	    this.initialized = true;
+	    this.oninit();
+	}
+	/**
+	 * 组件销毁
+	 */
+	Component.prototype.destory = function() {
+	    if(this.parent && this.parent.removeChild) {
+	        this.parent.removeChild(this);
+	        this.parent = null;
+	    }
+	    
+	    this.ondestory && this.ondestory();
+	    this.oninit = this.ondestory = null;
+	}
+
+	module.exports = Component;
+
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var CSE = __webpack_require__(13);
+	var CSE = __webpack_require__(6);
 	var AnimateObj = __webpack_require__(5);
-	var utils = __webpack_require__(7);
+	var utils = __webpack_require__(9);
+	var win2canvas = __webpack_require__(10);
+	var KeyEvent = __webpack_require__(11);
 
 	var Player = function (cfg) {
 	    this.width = 113;
@@ -646,6 +785,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	*/
 	Player.prototype.addControl = function(elem){
 	    var self = this, move = false;
+	    //  添加鼠标和触屏控制
 	    CSE.addHandler(elem,this.eventType.start,function(e){
 	        self.setPosition(e);
 	        move = true;
@@ -659,6 +799,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CSE.addHandler(elem,this.eventType.end,function(e){
 	        move = false;
 	    });
+
+	    //添加键盘控制
+	    KeyEvent.addListener();
+
 	    return this;
 	};
 
@@ -691,13 +835,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Event} 事件对象e
 	 */
 	Player.prototype.setPosition = function(e){
-	    console.log(e.clientX,"y:",e.clientY);
+	    //console.log(e.clientX,"y:",e.clientY);
 	    if(CSE.isMobile()){
 	        this.x = event.changedTouches[0].clientX - this.width/2;
 	        this.y = event.changedTouches[0].clientY - this.height/2;
 	    }else{
-	        this.x = e.clientX - this.width/2;
-	        this.y = e.clientY - this.height/2;
+	        var pos = win2canvas(this.canvas, e.clientX, e.clientY);
+	        this.x = pos.x - this.width/2;
+	        this.y = pos.y - this.height/2;
 	    }
 	    
 
@@ -730,11 +875,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ctx.drawImage(this.img, this.x, this.y);
 	};
 
+	Player.prototype.update = function(deltaTime) {
+	  if(KeyEvent.check('VK_LEFT') || KeyEvent.check('A')) {
+	        this.keyDownLeft = true;
+	    } else {
+	        this.keyDownLeft = false;
+	    }
+
+	    if(KeyEvent.check('VK_RIGHT') || KeyEvent.check('D')) {
+	        this.keyDownRight = true;
+	    } else {
+	        this.keyDownRight = false;
+	    }
+	    if(this.keyDownLeft) {
+	        this.x += - this.vx;   
+	    }
+	    if(this.keyDownRight) {
+	        this.x += this.vx;
+	        
+	    }
+	    this._insideBoundary();
+	    //this.parent.change(); 
+	    
+	};
+
 	module.exports = Player;
 
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports) {
 
 	var utils = {
@@ -901,7 +1070,175 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = utils;
 
 /***/ },
-/* 8 */
+/* 10 */
+/***/ function(module, exports) {
+
+	/**
+	 * [win2canvas 视口坐标转换为canvas坐标]
+	 * @param  {Object} canvas 对象
+	 * @param  {number} clientX 视口x轴坐标
+	 * @param  {number} clientY 视口y轴坐标
+	 * @return {Object}         在canvas中的坐标
+	 */
+	function win2canvas (canvas, clientX, clientY) {
+		var box = canvas.getBoundingClientRect();
+		return {
+			x : clientX - box.left * (canvas.width / box.width),
+			y : clientY - box.top * (canvas.height / box.height)
+		}
+	}
+
+	module.exports = win2canvas;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	/**
+	* 键盘事件管理
+	*/
+
+	var KeyEvent = function() {
+	}
+	/**
+	 * 按键与ascii码对应表
+	 */
+	KeyEvent.__keyCodeMap = {
+	    VK_ESCAPE : 27, // ESC键
+	    VK_RETURN : 13, // 回车键
+	    VK_TAB : 9, // TAB键
+	    VK_CAPITAL : 20, // Caps Lock键
+	    VK_SHIFT : 16, // Shift键
+	    VK_CONTROL : 17, // Ctrl键
+	    VK_MENU : 18, // Alt键
+	    VK_SPACE : 32, // 空格键
+	    VK_BACK : 8, // 退格键
+	    VK_LWIN : 91, // 左徽标键
+	    VK_RWIN : 92, // 右徽标键
+	    K_APPS : 93, // 鼠标右键快捷键
+
+	    VK_INSERT : 45, // Insert键
+	    VK_HOME : 36, // Home键
+	    VK_PRIOR : 33, // Page Up
+	    VK_NEXT : 34, // Page Down
+	    VK_END : 35, // End键
+	    VK_DELETE : 46, // Delete键
+	    VK_LEFT : 37, // 方向键(←)
+	    VK_UP : 38, // 方向键(↑)
+	    VK_RIGHT : 39, // 方向键(→)
+	    VK_DOWN : 40, // 方向键(↓)
+
+	    VK_F1 : 112, // F1键
+	    VK_F2 : 113, // F2键
+	    VK_F3 : 114, // F3键
+	    VK_F4 : 115, // F4键
+	    VK_F5 : 116, // F5键
+	    VK_F6 : 117, // F6键
+	    VK_F7 : 118, // F7键
+	    VK_F8 : 119, // F8键
+	    VK_F9 : 120, // F9键
+	    VK_F10 : 121, // F10键
+	    VK_F11 : 122, // F11键
+	    VK_F12 : 123, // F12键
+
+	    VK_NUMLOCK : 144, // Num Lock键
+	    VK_NUMPAD0 : 96, // 小键盘0
+	    VK_NUMPAD1 : 97, // 小键盘1
+	    VK_NUMPAD2 : 98, // 小键盘2
+	    VK_NUMPAD3 : 99, // 小键盘3
+	    VK_NUMPAD4 : 100, // 小键盘4
+	    VK_NUMPAD5 : 101, // 小键盘5
+	    VK_NUMPAD6 : 102, // 小键盘6
+	    VK_NUMPAD7 : 103, // 小键盘7
+	    VK_NUMPAD8 : 104, // 小键盘8
+	    VK_NUMPAD9 : 105, // 小键盘9
+	    VK_DECIMAL : 110, // 小键盘.
+	    VK_MULTIPLY : 106, // 小键盘*
+	    VK_PLUS : 107, // 小键盘+
+	    VK_SUBTRACT : 109, // 小键盘-
+	    VK_DIVIDE : 111, // 小键盘/
+	    VK_PAUSE : 19, // Pause Break键
+	    VK_SCROLL : 145, // Scroll Lock键
+
+	    A : 65, // A键
+	    B : 66, // B键
+	    C : 67, // C键
+	    D : 68, // D键
+	    E : 69, // E键
+	    F : 70, // F键
+	    G : 71, // G键
+	    H : 72, // H键
+	    I : 73, // I键
+	    J : 74, // J键
+	    K : 75, // K键
+	    L : 76, // L键
+	    M : 77, // M键
+	    N : 78, // N键
+	    O : 79, // O键
+	    P : 80, // P键
+	    Q : 81, // Q键
+	    R : 82, // R键
+	    S : 83, // S键
+	    T : 84, // T键
+	    U : 85, // U键
+	    V : 86, // V键
+	    W : 87, // W键
+	    X : 88, // X键
+	    Y : 89, // Y键
+	    Z : 90, // Z键
+
+	    NUMPAD0 : 48, // 0键
+	    NUMPAD1 : 49, // 1键
+	    NUMPAD2 : 50, // 2键
+	    NUMPAD3 : 51, // 3键
+	    NUMPAD4 : 52, // 4键
+	    NUMPAD5 : 53, // 5键
+	    NUMPAD6 : 54, // 6键
+	    NUMPAD7 : 55, // 7键
+	    NUMPAD8 : 56, // 8键
+	    NUMPAD9 : 57 // 9键
+	}
+	/**
+	 * 按键状态表
+	 */
+	KeyEvent.__keyDownMap = {};
+
+	/**
+	 * 添加按键事件监听
+	 */
+	KeyEvent.addListener = function() {
+	    document.onkeydown = function(e) {
+	        var e = e || event, code = e.keyCode || e.which;
+	        KeyEvent.__keyDownMap[code] = true;
+	    }
+
+	    document.onkeyup = function(e) {
+	        var e = e || event, code = e.keyCode || e.which;
+	        KeyEvent.__keyDownMap[code] = false;
+	    }
+	}
+	/**
+	 * 移除按键事件监听
+	 */
+	KeyEvent.removeListener = function() {
+	    document.onkeydown = null;
+	    document.onkeyup = null;
+	}
+	/**
+	 * 检查某个按键是否被按下
+	 * @param {String} key
+	 */
+	KeyEvent.check = function(key) {
+	    var code = KeyEvent.__keyCodeMap[key];
+	    return !!KeyEvent.__keyDownMap[code];
+	}
+
+	module.exports = KeyEvent;
+
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AnimateObj = __webpack_require__(5);
@@ -979,11 +1316,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CSE = __webpack_require__(13);
-	var Component = __webpack_require__(12);
+	var CSE = __webpack_require__(6);
+	var Component = __webpack_require__(7);
 	__webpack_require__(14);
 	var Game = function (cfg) {
 	  /**
@@ -1139,14 +1476,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 14 */
+/***/ function(module, exports) {
+
+	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+	// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+	// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+	// MIT license
+	(function() {
+	    var lastTime = 0;
+	    var vendors = ['ms', 'moz', 'webkit', 'o'];
+	    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+	        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+	        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+	    }
+	    if (!window.requestAnimationFrame) window.requestAnimationFrame = function(callback, element) {
+	        var currTime = new Date().getTime();
+	        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+	        var id = window.setTimeout(function() {
+	            callback(currTime + timeToCall);
+	        }, timeToCall);
+	        lastTime = currTime + timeToCall;
+	        return id;
+	    };
+	    if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function(id) {
+	        clearTimeout(id);
+	    };
+	}());
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CSE = __webpack_require__(13);
+	var CSE = __webpack_require__(6);
 	/*
 	* 动画分层渲染
 	*/
-	var Container = __webpack_require__(11);
+	var Container = __webpack_require__(16);
 	var Layer = function(cfg) {
 	    /*
 	    * 分层渲染的画布对象
@@ -1218,10 +1584,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CSE = __webpack_require__(13);
+	var CSE = __webpack_require__(6);
 	var AnimateObj = __webpack_require__(5);
 
 	/**
@@ -1345,170 +1711,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	module.exports = Container;
 
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CSE = __webpack_require__(13);
-	/**
-	* 组件基类, 定义组件的生命周期
-	*/
-
-	var Component = function(cfg) {
-
-	    /**
-	     * 初始化状态
-	     */
-	    this.initialized = false;
-
-	    /**
-	     * read only
-	     * 父容器组件
-	     */
-	    this.parent = null;
-
-	    // 扩展属性
-	    CSE.extend(this, cfg);
-	}
-	/**
-	 * 事件定义
-	 * oninit 初始化
-	 * ondestory 销毁
-	 */
-	Component.prototype.oninit = CSE.fn;
-	Component.prototype.ondestory = CSE.fn;
-
-	/**
-	 * 组件初始化
-	 */
-	Component.prototype.init = function() {
-	    this.initialized = true;
-	    this.oninit();
-	}
-	/**
-	 * 组件销毁
-	 */
-	Component.prototype.destory = function() {
-	    if(this.parent && this.parent.removeChild) {
-	        this.parent.removeChild(this);
-	        this.parent = null;
-	    }
-	    
-	    this.ondestory && this.ondestory();
-	    this.oninit = this.ondestory = null;
-	}
-
-	module.exports = Component;
-
-
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	var CSE = {
-	   /**
-	    * 供全局引用的空函数
-	    */
-	    fn : function () {},
-		/**
-	     * 通过原型实现的类继承
-	     * @param {Function} childClass
-	     * @param {Function} parentClass
-	     */
-	    inherit : function(childClass, parentClass) {
-	        var Constructor = new Function();
-	        Constructor.prototype = parentClass.prototype;
-	        childClass.prototype = new Constructor();
-	        childClass.prototype.constructor = childClass;
-	        childClass.superclass = parentClass.prototype;
-
-	        if(childClass.prototype.constructor == Object.prototype.constructor) {
-	            childClass.prototype.constructor = parentClass;
-	        }
-	    },
-	    /**
-	     * 扩展和覆盖一个对象的属性
-	     * @param {Object} obj
-	     * @param {Object} newProperties
-	     */
-	    extend : function(obj, newProperties) {
-	        var key;
-
-	        for(key in newProperties) {
-	            if(newProperties.hasOwnProperty(key)) {
-	                obj[key] = newProperties[key];
-	            }
-	        }
-
-	        return obj;
-	    },
-
-	    addHandler: function(element, type, handler) {
-	            if (element.addEventListener) { /***W3C**/
-	                element.addEventListener(type, handler, false);
-	            } else if (element.attachEvent) { /***IE**/
-	                element.attachEvent("on" + type, handler);
-	            } else {
-	                element["on" + type] = handler;
-	            }
-	        },
-
-	    removeHandler: function(element, type, handler) {
-	        if (element.removeEventListener) {
-	            element.removeEventListener(type, handler, false);
-	        } else if (element.detachEvent) {
-	            element.detachEvent("on" + type, handler);
-	        } else {
-	            element["on" + type] = null;
-	        }
-	    },
-	    isMobile : function(){
-	        var sUserAgent= navigator.userAgent.toLowerCase(),
-	        bIsIpad= sUserAgent.match(/ipad/i) == "ipad",
-	        bIsIphoneOs= sUserAgent.match(/iphone os/i) == "iphone os",
-	        bIsMidp= sUserAgent.match(/midp/i) == "midp",
-	        bIsUc7= sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4",
-	        bIsUc= sUserAgent.match(/ucweb/i) == "ucweb",
-	        bIsAndroid= sUserAgent.match(/android/i) == "android",
-	        bIsCE= sUserAgent.match(/windows ce/i) == "windows ce",
-	        bIsWM= sUserAgent.match(/windows mobile/i) == "windows mobile",
-	        bIsWebview = sUserAgent.match(/webview/i) == "webview";
-	        return (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM);
-	     }
-
-	}
-	module.exports = CSE;
-
-/***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-	// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-	// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
-	// MIT license
-	(function() {
-	    var lastTime = 0;
-	    var vendors = ['ms', 'moz', 'webkit', 'o'];
-	    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-	        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-	        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-	    }
-	    if (!window.requestAnimationFrame) window.requestAnimationFrame = function(callback, element) {
-	        var currTime = new Date().getTime();
-	        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-	        var id = window.setTimeout(function() {
-	            callback(currTime + timeToCall);
-	        }, timeToCall);
-	        lastTime = currTime + timeToCall;
-	        return id;
-	    };
-	    if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function(id) {
-	        clearTimeout(id);
-	    };
-	}());
 
 /***/ }
 /******/ ])

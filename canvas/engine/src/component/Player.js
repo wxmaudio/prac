@@ -2,6 +2,8 @@
 var CSE = require('../core/base');
 var AnimateObj = require('../core/AnimateObj');
 var utils = require('../util/utils');
+var win2canvas = require('../event/win2canvas');
+var KeyEvent = require('../event/KeyEvent');
 
 var Player = function (cfg) {
     this.width = 113;
@@ -34,6 +36,7 @@ Player.prototype.onHit = function(){};
 */
 Player.prototype.addControl = function(elem){
     var self = this, move = false;
+    //  添加鼠标和触屏控制
     CSE.addHandler(elem,this.eventType.start,function(e){
         self.setPosition(e);
         move = true;
@@ -47,6 +50,10 @@ Player.prototype.addControl = function(elem){
     CSE.addHandler(elem,this.eventType.end,function(e){
         move = false;
     });
+
+    //添加键盘控制
+    KeyEvent.addListener();
+
     return this;
 };
 
@@ -84,8 +91,9 @@ Player.prototype.setPosition = function(e){
         this.x = event.changedTouches[0].clientX - this.width/2;
         this.y = event.changedTouches[0].clientY - this.height/2;
     }else{
-        this.x = e.offsetX - this.width/2;
-        this.y = e.offsetY - this.height/2;
+        var pos = win2canvas(this.canvas, e.clientX, e.clientY);
+        this.x = pos.x - this.width/2;
+        this.y = pos.y - this.height/2;
     }
     
 
@@ -116,6 +124,31 @@ Player.prototype.hitTest = function(targetList){
 
 Player.prototype.customDraw = function(ctx) {
     ctx.drawImage(this.img, this.x, this.y);
+};
+
+Player.prototype.update = function(deltaTime) {
+  if(KeyEvent.check('VK_LEFT') || KeyEvent.check('A')) {
+        this.keyDownLeft = true;
+    } else {
+        this.keyDownLeft = false;
+    }
+
+    if(KeyEvent.check('VK_RIGHT') || KeyEvent.check('D')) {
+        this.keyDownRight = true;
+    } else {
+        this.keyDownRight = false;
+    }
+    
+    if(this.keyDownLeft) {
+        this.x += - this.vx;   
+    }
+    if(this.keyDownRight) {
+        this.x += this.vx;
+        
+    }
+    this._insideBoundary();
+    //this.parent.change(); 
+    
 };
 
 module.exports = Player;

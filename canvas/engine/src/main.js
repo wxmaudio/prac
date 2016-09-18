@@ -61,11 +61,14 @@ function initMainLayer(){
     //绘制玩家
     var player = new Player({
        img : ImageLoader.get('player'),
+       canvas : canvas,
        width : 112,
        height : 106,
        radius : 50,//用于碰撞检测
        x : canvas.width/2 - 50,
-       y : canvas.height/2 - 40
+       y : canvas.height/2 - 40,
+       vx : 2,
+       vy : 0
     });
     //添加游戏鼠标控制
     player.addControl(document.getElementById('gamePannel'));
