@@ -54,374 +54,206 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1)();
+	__webpack_require__(1);
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * 游戏主逻辑
-	 */
+	'use strict';
+	var Game = __webpack_require__(9);
+	var Layer = __webpack_require__(11);
+	var Ball = __webpack_require__(5);
+	//var AnimateObj = require('../core/AnimateObj');
+	var Point = __webpack_require__(7);
 
-	var ImageLoader = __webpack_require__(2);
-	var imageList = __webpack_require__(3);
-	var getParticles = __webpack_require__(4);
-	var Player = __webpack_require__(8);
-	var getMovingBg = __webpack_require__(12);
-	var Game = __webpack_require__(13);
-	var Layer = __webpack_require__(15);
+	var input = document.getElementById('inputText'),
+	 	canvas = document.getElementById('canvas'),
+	 	canvasWidth = 1000,
+	 	canvasHeight = 500,
+	 	ctx = canvas.getContext('2d'),
+	 	colors = ['#B2949D', '#FFF578', '#FF5F8D', '#37A9CC', '#188EB2'];
 
-	/**
-	 * 加载过程中提示效果
-	 * @param  {number} loaded 已经加载数目
-	 * @param  {number} total 总数目
-	 * @return {null}
-	 */
-	function loading(loaded, total){
-	   var percent = (loaded / total) * 100;
-	   document.getElementById("loadProgress").innerHTML = percent;
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+
+	var animation = new Game();
+	var shapeLayer = new Layer({canvas : canvas});
+	animation.addLayer(shapeLayer);
+	var last = null;
+	function showShape(newBalls){
+		var curBalls = shapeLayer.childs,
+			curLen = curBalls.length,
+			w = canvasWidth,
+			h = canvasHeight;
+
+			// console.log(last === newBalls);
+			// last = newBalls;
+
+
+	   if(curBalls.length === 0){
+	   		for(var i = 0; i < newBalls.length; i++){
+				shapeLayer.appendChild(new Ball(newBalls[i]));
+			}
+			return;
+	   }
+
+		//新小球多于现有小球数量
+		if(curLen < newBalls.length){
+			var more = newBalls.length - curLen;
+			for(var i = 0; i < more; i++){
+				shapeLayer.appendChild(
+					new Ball({
+						x : w / 2, 
+						y : h / 2,
+						//radius : 2
+						//color : colors[~~(Math.random() * colors.length)],
+					})
+				);
+			}
+		}
+
+		var used = 0;
+		//随机选出一个点移动到目标位置，不断循环
+		while(newBalls.length > 0){
+			var j = Math.floor(Math.random() * newBalls.length);
+			shapeLayer.childs[used].setTarget(newBalls[j]);
+			//////shapeLayer.childs[used].x = newBalls[j].x;
+			//////shapeLayer.childs[used].y = newBalls[j].y;
+			// curBalls[j].addMoveQueue(
+			// 	new Point({
+			// 	  x: newBalls[j].x ,
+		 //          y: newBalls[j].y ,
+		 //          a: 1,
+		 //          z: 5,
+		 //          h: 0
+			// 	})
+			// );
+			used ++;
+			//从新小球对象中删除这个已经进入移动队列中的节点
+			newBalls = newBalls.slice(0, j).concat(newBalls.slice(j + 1));
+		}
+
+		//处理现有的多余的不用的小球对象
+		if(used < curLen){
+			for(var k = used; k < curLen; k ++){
+				// shapeLayer.childs[k].setTarget({
+				// 	    x: Math.random() * w,
+			 //            y: Math.random() * h,
+			 //            a: 0.3, //.4  变透明
+			 //            z: Math.random() * 4,
+			 //            h: 0
+				// 	});
+				curBalls[k].addMoveQueue(
+					new Point({
+					    x: Math.random() * w,
+			            y: Math.random() * h,
+			            a: 0.3, //.4  变透明
+			            z: Math.random() * 4,
+			            h: 0
+					})
+				);
+			}
+		}
 	}
 
-	//UI
-	//记录分数
-	var score = 0;
-	function setScore(){
-	    score ++;
-	    document.getElementById("score").innerHTML = score;
+	function showShape2(newBalls){
+		for(var i = 0; i < newBalls.length; i++){
+			shapeLayer.appendChild(new Ball(newBalls[i]));
+		}
 	}
 
-	/*
-	* 初始化游戏背景画布
-	*/
-	function initBgLayer(){
-	    var bgLayer = new Layer({canvas: "bg"});
-	    var bgctx = bgLayer.context;
-	    //初始化背景画布图案
-	    bgctx.drawImage(ImageLoader.get('bg'), 0, 0);
+	function drawText (text) {
+	    animation.clear();
+	    //shapeLayer.destroyChilds();
 
-	    //绘制游戏背景
-	    var bg = getMovingBg(ImageLoader.get('bg'), 320, 1126, 1, true);
-	    bgLayer.appendChild(bg);
-	    return bgLayer;
-	}
+		var offsetCanvas = document.createElement('canvas'),
+			octx = offsetCanvas.getContext('2d');
+		offsetCanvas.width = canvasWidth;
+		offsetCanvas.height = canvasHeight;
+		
+		//octx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-	/*
-	* 绘制游戏主画布
-	 */
-	function initMainLayer(){
-	    var layer = new Layer();
-	    var canvas = layer.setCanvas("main");
-	    var playctx = layer.context;
+		octx.beginPath();
+		octx.font = "200px Georgia";
+		octx.fillStyle = 'black';
+		octx.fillText(text, 0, canvasHeight / 2 - 100);
+		octx.closePath();
 
-	    //绘制小球
-	    var particleNum = 15;
-	    var particles = getParticles(particleNum, canvas.width, canvas.height);
-	    layer.appendChilds(particles);
+		var imageData = octx.getImageData(0, 0, canvasWidth, canvasHeight),
+			data = imageData.data, 
+			gap = 6,
+			newBalls = [],
+			ball = null;
 
-
-	    //绘制玩家
-	    var player = new Player({
-	       img : ImageLoader.get('player'),
-	       canvas : canvas,
-	       width : 112,
-	       height : 106,
-	       radius : 50,//用于碰撞检测
-	       x : canvas.width/2 - 50,
-	       y : canvas.height/2 - 40,
-	       vx : 2,
-	       vy : 0
-	    });
-	    //添加游戏鼠标控制
-	    player.addControl(document.getElementById('gamePannel'));
-	    //注册发生碰撞时的回调
-	    player.onHit = function(target, index){
-	        target.visible = false;
-	        setScore();
-	    }
-	    layer.appendChild(player);
-
-
-	    //拓展画布更新函数，循环利用节点池中的节点,同时进行碰撞检测
-	    layer.onupdate = function(){
-	        var alive = 0, hideIndexs = [];
-	        //与player的碰撞检测
-	        player.hitTest(particles);
-
-	        //注意：layer中可能有多种类型
-	        layer.childs.forEach(function(child, i){
-	            if(typeof child.type === 'string' && child.type == 'particle'){
-
-	                if(child.visible){
-	                    alive++;
-	                }else{
-	                    hideIndexs.push(i);
-	                }
-	            }    
-	        });
-
-	        //向屏幕中产生回收的旧节点
-	        if(alive < 10 && hideIndexs.length > 0){
-	            var index = hideIndexs.shift(),child;
-	            child = layer.childs[index];
-
-	            child.x = Math.round(canvas.width * Math.random());
-	            child.y = 0;
-	            child.visible = true;
-	        }
-	    }
-
-	    return layer;
-	}
-
-	/*
-	* 游戏初始化
-	 */
-	function initGame(){
-	    //新建游戏对象
-	    var game = new Game();
-
-	    //创建背景画布层
-	    var bgLayer = initBgLayer();
-
-	    //创建画布层
-	    var mainLayer = initMainLayer();
-
-	    game.addLayer(bgLayer);
-	    game.addLayer(mainLayer);
-
-	    //注册游戏控制事件
-	    document.getElementById('start').onclick = function(){
-	        game.start()
-	    };
-	    document.getElementById('stop').onclick = function(){
-	        game.stop();
-	    }
-	    document.getElementById('destroy').onclick = function(){
-	        game.destroy();
-	    };
-
-	    return game;
-	}
-
-	/*
-	* 游戏加载成功回调
-	 */
-	function loaded(state){
-	    if(!state){
-	        alert('加载游戏出错，请稍后再试！');
-	        return false;
+		//octx.clearRect(0, 0, canvasWidth, canvasHeight);
+	    for(var i = 0; i < canvasHeight; i += gap){
+	    	for(var j = 0; j < canvasWidth; j += gap){
+	    		if(data[(i * canvasWidth + j)*4 + 3]){
+	    // 			ball = new Ball({
+					// 	x : j,
+					// 	y : i,
+					// 	radius:2
+					// });	
+					//shapeLayer.appendChild(ball);
+	    			newBalls.push({
+						x : j,
+						y : i,
+						radius:2
+						//color : colors[~~(Math.random() * colors.length)]
+					});	
+	    		}
+	    	}
 	    }
 
-	    //显示游戏操作按钮
-	    document.getElementById("operation").style.display = 'block'; 
-	    initGame();
+	    showShape(newBalls);
+
+	    animation.restart();
+
+		// for(var i = 0; i < canvasHeight; i += gap){
+	 //    	for(var j = 0; j < canvasWidth; j += gap){
+	 //          if(data[(i * canvasWidth + j)*4 + 3]){
+				
+		// 		ball = new AnimateObj({
+		// 			x : j,
+		// 			y : i,
+		// 			color : "red",
+		// 			radius : 2
+		// 		});
+		// 		ball.customDraw = function (ctx) {
+		// 		    var t = this;
+
+		// 		    ctx.beginPath();
+		// 		    ctx.fillStyle = this.color;
+		// 		    ctx.arc(t.x, t.y, t.radius, 0, 2*Math.PI, true);
+		// 		    ctx.closePath();
+		// 		    ctx.fill();
+		// 		}
+		// 	    ball.render(ctx);
+		// 	}
+		//   }
+		// }
 	}
 
-	function init(){
-	   //加载游戏中的所有图片
-	    ImageLoader.load(imageList,loaded , loading); 
-	}
+	input.addEventListener('change', function(){
+	   drawText(input.value);
+	}, false);
 
-	module.exports = init;
+
+
+
+
+
+
+
+
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
-
-	/*
-	* 加载图片资源
-	*/
-	"use strict"; 
-
-	/*
-	* 已加载图片对象
-	* 包含图片的加载状态 state
-	* @private
-	*/
-	var _loadedImages = {
-	  state : 'init'
-	};
-	/*
-	* 已加载图片数量
-	*/
-	var loadedNums = 0;
-
-	function loadOneImage(url, callback, key){
-	   //若已经缓存，则直接返回
-	   if(_loadedImages[key]){
-	      callback(true);
-	      return ;
-	   }
-
-	   var img = new Image();
-
-	   img.src = url;
-
-	   img.onload = function(){
-	      //缓存图片
-	      key && (_loadedImages[key] = img);
-	      callback(true);
-
-	      //清除绑定事件
-	      img.onload = img.onerror = null;
-	   }
-
-	   img.onerror = function(){
-	      key && (_loadedImages[key] = null);
-	      callback(false);
-	   }
-	}
-
-	/**
-	 * 加载图片数组
-	 * @param  {Object} images 图片数组
-	 * @param  {Function} onComplete 加载成功回调
-	 * @param {Function} [onProgress] 加载过程中回调，可用于提示加载进度
-	 * @param  {string} [timeout] 超时时间，默认10000ms
-	 * @return {[type]}
-	 */
-	function loadImages(images, onComplete, onProgress, timeout){
-
-	    if(images.length === 0){
-	        onComplete(true);
-	    }
-
-	    /*
-	    * 图片加载定时器
-	    */
-	    var _imageTimeOut = null;
-
-	    //超时则返回
-	    _imageTimeOut = setTimeout(function(){
-	       onComplete(false);
-	    }, timeout || 10000);
-
-	    function onloaded(){
-	        loadedNums++;
-	        //通知加载进度
-	        if(typeof onProgress === 'function'){
-	           onProgress(loadedNums, images.length);
-	        }
-	      
-	        if(images.length === loadedNums){
-
-	            _loadedImages.state = 'loaded';
-	            //图片加载完成，清除定时器
-	            clearTimeout(_imageTimeOut);
-
-	            onComplete(true);
-	        }
-	    }
-
-	    _loadedImages.state = 'loading';
-
-	    for(var i = 0; i< images.length; i++){
-	        loadOneImage(images[i].url, onloaded, images[i].key, timeout);
-	    } 
-	}
-	/**
-	 * 获取已加载的Image对象
-	 * @param {String} id
-	 */
-	function get(id){
-	    return _loadedImages[id];
-	}
-
-	/** 
-	 * 获得图片加载状态
-	 * @return {string} 取值代表的含义
-	 * init : 已初始化
-	 * loading : 加载中
-	 * loaded : 加载完成
-	 */
-	function getState(){
-	  return _loadedImages.state;
-	}
-
-	function getList(){
-	  return _loadedImages;
-	}
-
-	var ImageLoader = {
-	  load : loadImages,
-	  get : get,
-	  getList : getList,
-	  getState : getState
-	}
-
-	module.exports = ImageLoader;
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	/**
-	 * 图像资源列表
-	 */
-	var ImageRes = [
-			{ 
-			    key : 'bg',
-			    url : './images/bg.jpg'
-			},
-			{
-			    key : 'player',
-			    url : './images/player.png'
-			}
-		];
-
-
-	module.exports = ImageRes;
-
-/***/ },
-/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AnimateObj = __webpack_require__(5);
-	var particles = [];
-
-	function getParticles (num, width, height) {
-		for(var i = 0; i < num ; i ++){
-		    var colorArr = ["#005588", "#080"];
-		    //var scoreArr = [1,2];
-		    var type = Math.random()>0.5? 1:0;
-		    var particle = new AnimateObj({
-		        index: i,//序号
-		        type : 'particle',//标明孩子节点类型
-		        x : Math.round(width * Math.random()),
-		        y : 0,
-		        rangeX : [0, width],
-		        rangeY : [0, height],
-		        vy : 2 * Math.random(),//垂直向下运动
-		        vx : 0, //垂直向上运动
-		        radius : 10,//半径大小
-		        width : 20,
-		        height : 20,
-		        color : colorArr[type],
-		        autoChange : true
-		    });
-		    particle.customDraw = function (ctx) {
-		        var t = this;
-
-		        ctx.beginPath();
-		        ctx.fillStyle = t.color;
-		        ctx.arc(t.x, t.y, t.radius, 0, 2*Math.PI, true);
-		        ctx.closePath();
-		        ctx.fill();
-		    }
-
-		    particles.push(particle);
-		}
-		return particles;
-	}
-	module.exports = getParticles;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CSE = __webpack_require__(6);
-	var Component = __webpack_require__(7);
+	var CSE = __webpack_require__(3);
+	var Component = __webpack_require__(4);
 	/**
 	* 显示组件基类
 	*/
@@ -609,7 +441,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
+/* 3 */
 /***/ function(module, exports) {
 
 	var CSE = {
@@ -687,10 +519,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = CSE;
 
 /***/ },
-/* 7 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CSE = __webpack_require__(6);
+	var CSE = __webpack_require__(3);
 	/**
 	* 组件基类, 定义组件的生命周期
 	*/
@@ -744,167 +576,135 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-	var CSE = __webpack_require__(6);
-	var AnimateObj = __webpack_require__(5);
-	var utils = __webpack_require__(9);
-	var win2canvas = __webpack_require__(10);
-	var KeyEvent = __webpack_require__(11);
+	'user strict';
+	var CSE = __webpack_require__(3);
+	var AnimateObj = __webpack_require__(2);
+	var utils = __webpack_require__(6);
 
-	var Player = function (cfg) {
-	    this.width = 113;
-	    this.height = 106;
-	    if(CSE.isMobile()){
-	        this.eventType = {
-	            start : 'touchstart',
-	            move : 'touchmove',
-	            end : 'touchend'
-	        }
-	    }else{
-	        this.eventType = {
-	            start : 'mousedown',
-	            move : 'mousemove',
-	            end : 'mouseup'
-	        }
-	    }
+	var Point = __webpack_require__(7);
+	var Color = __webpack_require__(8);
+
+	function Ball(cfg) {
+	    //调用父类的构造函数
+	    Ball.superclass.constructor.call(this, cfg);
+
+	    this.radio = 0.07;//靠近速率
+
+	    this.z = 2;
+	    this.a = 1;
+	    this.h = 0;
 	    
-	    Player.superclass.constructor.call(this, cfg);
+
+	    this.color = new Color(255, 0, 0, 1);
+	    //this.color = new Color(34, 148, 157, 1);
+
+	    //要靠近的目标对象队列
+	    this.queue = [];
+
+	    
+
+	    //当前要靠近的目标对象
+	    this.target = this.clone();
+	    this.autoChange = true;
+	    this.radius = 3;
 	}
-	CSE.inherit(Player, AnimateObj);
 
-	/*
-	* 发生碰撞后的回调函数
-	*/
-	Player.prototype.onHit = function(){};
+	CSE.inherit(Ball, AnimateObj);
 
-	/*
-	* 用鼠标或手势或键盘控制player
-	*/
-	Player.prototype.addControl = function(elem){
-	    var self = this, move = false;
-	    //  添加鼠标和触屏控制
-	    CSE.addHandler(elem,this.eventType.start,function(e){
-	        self.setPosition(e);
-	        move = true;
-	    });
-	    CSE.addHandler(elem,this.eventType.move,function(e){
-	        e.preventDefault();
-	        if(move){
-	            self.setPosition(e);
-	        }
-	    });
-	    CSE.addHandler(elem,this.eventType.end,function(e){
-	        move = false;
-	    });
+	Ball.prototype.clone = function() {
+	    return new Point(this);
+	};
 
-	    //添加键盘控制
-	    KeyEvent.addListener();
-
-	    return this;
+	Ball.prototype.distanceTo = function(p) {
+	    return utils.distance(this, p, true);
 	};
 
 	/**
-	 * 调整位置到边界范围内
-	 * @private
+	 * 向p点方向运动,运动完成返回true, 未完成为false
+	 * @param  {[type]} p [description]
+	 * @return {boolean}   运动完成返回true, 未完成为false
 	 */
-	Player.prototype._insideBoundary = function() {
-	    var rangeX = [0, 320],
-	        rangeY = [0, 640];
-
-	    //左右边界检查
-	    if(this.x < rangeX[0]) {
-	        this.x = rangeX[0];
-	    } else if(this.x > rangeX[1] - this.width) {
-	        this.x = rangeX[1] - this.width;
+	Ball.prototype._moveTo = function(p) {
+	    var details = this.distanceTo(p);
+	    //移动的点坐标不合法，则直接返回移动完成
+	    if(details.length < 3){
+	        return true;
 	    }
 
-	    //上下边界检查
-	    if(this.y < rangeY[0]){
-	        this.y = rangeY[0];
-	    } else if(this.y > rangeY[1] - this.height){
-	        this.y = rangeY[1] - this.height;
-	    }
+	    var dx = details[0],
+	        dy = details[1],
+	        d  =  details[2];
 
-	}
+	    if(d > 1){
+	        this.x += dx * this.radio;
+	        this.y += dy * this.radio;
+	    }else{//靠近目标
+	        return true;
+	    } 
+	    return false;   
+	};
 
 	/**
-	 * 设置玩家位置
-	 * @param {Event} 事件对象e
+	 * 添加运动点队列
+	 * @param {[type]} p [description]
 	 */
-	Player.prototype.setPosition = function(e){
-	    if(CSE.isMobile()){
-	        //console.log(e.touches.item(0));
-	        this.x = e.changedTouches[0].clientX - this.width/2;
-	        this.y = e.changedTouches[0].clientY - this.height/2;
-	    }else{
-	        var pos = win2canvas(this.canvas, e.clientX, e.clientY);
-	        this.x = pos.x - this.width/2;
-	        this.y = pos.y - this.height/2;
+	Ball.prototype.addMoveQueue = function(p) {
+	    if(this.distanceTo(p) > 1){
+	        this.queue.push(p);
 	    }
-	    
+	};
 
-	    this._insideBoundary();
-	 
-	    //刷新父层画布
-	    this.parent.change();
+	Ball.prototype.setTarget = function(p) {
+	    this.target.x = p.x || this.x;
+	    this.target.y = p.y || this.y;
+	    this.target.z = p.z || this.z;
+	    this.target.a = p.a || this.a;
+	    this.target.h = p.h || 0;
+	};
 
-	    return this;
-	}
 
-	/*
-	* 检测与目标列表的碰撞情况
-	* @targetList {Array} 目标对象数组
-	*/
-	Player.prototype.hitTest = function(targetList){
-	    var target = 0;
-	    for(var i = 0, len = targetList.length; i < len; i++){
-	        target = targetList[i];
-
-	        //与可见颗粒发生碰撞
-	        if(target.visible && utils.rectCollision(this, target)){
-	        //if(target.visible && utils.circleCollision(this, target)){
-	            this.onHit.call(this, target, i);
+	Ball.prototype.update = function(deltaTime){
+	    var p =null;
+	    if(this._moveTo(this.target)){
+	        //已移动到目标位置后则开始移向下一个位置
+	        p = this.queue.shift();
+	        if(p){
+	            this.setTarget(p);
+	            console.log("target", p);
+	        }else{
+	            //所有的移动任务完成
+	            this.x += Math.sin(Math.random() * 2 * Math.PI);
+	            this.y += Math.sin(Math.random() * 2 * Math.PI);
 	        }
-	    }   
+	    }
+
+	    //透明度变化
+	    //小球与目标小球透明度的差
+	    d = this.target.a - this.color.a;
+	    //按照0.05的比率接近目标透明度
+	    this.color.a = Math.max(0.1, this.color.a + (d * 0.05));
+	    
+	    
+	    this.autoChange &&  this.parent && this.parent.change && this.parent.change();
+	    this.onupdate(deltaTime);
 	}
 
-	Player.prototype.customDraw = function(ctx) {
-	    ctx.drawImage(this.img, this.x, this.y);
-	};
-
-	Player.prototype.update = function(deltaTime) {
-	  if(KeyEvent.check('VK_LEFT') || KeyEvent.check('A')) {
-	        this.keyDownLeft = true;
-	    } else {
-	        this.keyDownLeft = false;
-	    }
-
-	    if(KeyEvent.check('VK_RIGHT') || KeyEvent.check('D')) {
-	        this.keyDownRight = true;
-	    } else {
-	        this.keyDownRight = false;
-	    }
-
-	    if(this.keyDownLeft) {
-	        this.x += - this.vx;   
-	    }
-	    if(this.keyDownRight) {
-	        this.x += this.vx;
-	        
-	    }
-	    this._insideBoundary();
-	    //this.parent.change(); 
+	Ball.prototype.customDraw = function (ctx) {
+	    var t = this;
 	    
-	};
-
-	module.exports = Player;
-
+	    ctx.beginPath();
+	    ctx.fillStyle = this.color.render();
+	    ctx.arc(t.x, t.y, t.radius, 0, 2*Math.PI, true);
+	    ctx.closePath();
+	    ctx.fill();
+	}
+	module.exports = Ball;
 
 /***/ },
-/* 9 */
+/* 6 */
 /***/ function(module, exports) {
 
 	var utils = {
@@ -912,8 +712,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return (value - min) / (max - min);
 	  },
 
-	  lerp: function(norm, min, max) {
+	  lerp : function(norm, min, max) {
 	    return (max - min) * norm + min;
+	  },
+
+	  lerpAngle : function(a, b, t) {
+	    var d = b - a;
+	    if (d > Math.PI) d = d - 2 * Math.PI;
+	    if (d < -Math.PI) d = d + 2 * Math.PI;
+	    return a + d * t;
+	  },
+
+	  //按照某个速度靠近某个目标,速度由快变慢
+	  lerpDistance : function(aim, cur, ratio) {
+	    var delta = cur - aim;
+	    return aim + delta * ratio;
 	  },
 
 	  map: function(value, sourceMin, sourceMax, destMin, destMax) {
@@ -927,10 +740,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*
 	  * 计算两个坐标点之间的距离
 	  */
-	  distance: function(p0, p1) {
+	  distance: function(p0, p1, details) {
 	    var dx = p1.x - p0.x,
-	      dy = p1.y - p0.y;
-	    return Math.sqrt(dx * dx + dy * dy);
+	      dy = p1.y - p0.y,
+	      d = Math.sqrt(dx * dx + dy * dy);
+	      return details ? [dx, dy, d] : d;
 	  },
 
 	  /*
@@ -1071,258 +885,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = utils;
 
 /***/ },
-/* 10 */
+/* 7 */
 /***/ function(module, exports) {
 
-	/**
-	 * [win2canvas 视口坐标转换为canvas坐标]
-	 * @param  {Object} canvas element 对象
-	 * @param  {number} winX window下x轴坐标（可能是视口或文档坐标）
-	 * @param  {number} winY window下y轴坐标
-	 * @return {Object}         在canvas中的坐标
-	 */
-	function win2canvas (elem, winX, winY) {
-		var box = elem.getBoundingClientRect();
-		return {
-			x : winX - box.left * (elem.width / box.width),
-			y : winY - box.top * (elem.height / box.height)
-		}
-	}
+	var Point = function (args) {
+	  this.x = args.x;
+	  this.y = args.y;
+	  this.z = args.z;
+	  this.a = args.a;
+	  this.h = args.h;
+	};
 
-	module.exports = win2canvas;
+	module.exports = Point;
 
 /***/ },
-/* 11 */
+/* 8 */
 /***/ function(module, exports) {
 
-	/**
-	* 键盘事件管理
-	*/
-
-	var KeyEvent = function() {
-	}
-	/**
-	 * 按键与ascii码对应表
-	 */
-	KeyEvent.__keyCodeMap = {
-	    VK_ESCAPE : 27, // ESC键
-	    VK_RETURN : 13, // 回车键
-	    VK_TAB : 9, // TAB键
-	    VK_CAPITAL : 20, // Caps Lock键
-	    VK_SHIFT : 16, // Shift键
-	    VK_CONTROL : 17, // Ctrl键
-	    VK_MENU : 18, // Alt键
-	    VK_SPACE : 32, // 空格键
-	    VK_BACK : 8, // 退格键
-	    VK_LWIN : 91, // 左徽标键
-	    VK_RWIN : 92, // 右徽标键
-	    K_APPS : 93, // 鼠标右键快捷键
-
-	    VK_INSERT : 45, // Insert键
-	    VK_HOME : 36, // Home键
-	    VK_PRIOR : 33, // Page Up
-	    VK_NEXT : 34, // Page Down
-	    VK_END : 35, // End键
-	    VK_DELETE : 46, // Delete键
-	    VK_LEFT : 37, // 方向键(←)
-	    VK_UP : 38, // 方向键(↑)
-	    VK_RIGHT : 39, // 方向键(→)
-	    VK_DOWN : 40, // 方向键(↓)
-
-	    VK_F1 : 112, // F1键
-	    VK_F2 : 113, // F2键
-	    VK_F3 : 114, // F3键
-	    VK_F4 : 115, // F4键
-	    VK_F5 : 116, // F5键
-	    VK_F6 : 117, // F6键
-	    VK_F7 : 118, // F7键
-	    VK_F8 : 119, // F8键
-	    VK_F9 : 120, // F9键
-	    VK_F10 : 121, // F10键
-	    VK_F11 : 122, // F11键
-	    VK_F12 : 123, // F12键
-
-	    VK_NUMLOCK : 144, // Num Lock键
-	    VK_NUMPAD0 : 96, // 小键盘0
-	    VK_NUMPAD1 : 97, // 小键盘1
-	    VK_NUMPAD2 : 98, // 小键盘2
-	    VK_NUMPAD3 : 99, // 小键盘3
-	    VK_NUMPAD4 : 100, // 小键盘4
-	    VK_NUMPAD5 : 101, // 小键盘5
-	    VK_NUMPAD6 : 102, // 小键盘6
-	    VK_NUMPAD7 : 103, // 小键盘7
-	    VK_NUMPAD8 : 104, // 小键盘8
-	    VK_NUMPAD9 : 105, // 小键盘9
-	    VK_DECIMAL : 110, // 小键盘.
-	    VK_MULTIPLY : 106, // 小键盘*
-	    VK_PLUS : 107, // 小键盘+
-	    VK_SUBTRACT : 109, // 小键盘-
-	    VK_DIVIDE : 111, // 小键盘/
-	    VK_PAUSE : 19, // Pause Break键
-	    VK_SCROLL : 145, // Scroll Lock键
-
-	    A : 65, // A键
-	    B : 66, // B键
-	    C : 67, // C键
-	    D : 68, // D键
-	    E : 69, // E键
-	    F : 70, // F键
-	    G : 71, // G键
-	    H : 72, // H键
-	    I : 73, // I键
-	    J : 74, // J键
-	    K : 75, // K键
-	    L : 76, // L键
-	    M : 77, // M键
-	    N : 78, // N键
-	    O : 79, // O键
-	    P : 80, // P键
-	    Q : 81, // Q键
-	    R : 82, // R键
-	    S : 83, // S键
-	    T : 84, // T键
-	    U : 85, // U键
-	    V : 86, // V键
-	    W : 87, // W键
-	    X : 88, // X键
-	    Y : 89, // Y键
-	    Z : 90, // Z键
-
-	    NUMPAD0 : 48, // 0键
-	    NUMPAD1 : 49, // 1键
-	    NUMPAD2 : 50, // 2键
-	    NUMPAD3 : 51, // 3键
-	    NUMPAD4 : 52, // 4键
-	    NUMPAD5 : 53, // 5键
-	    NUMPAD6 : 54, // 6键
-	    NUMPAD7 : 55, // 7键
-	    NUMPAD8 : 56, // 8键
-	    NUMPAD9 : 57 // 9键
-	}
-	/**
-	 * 按键状态表
-	 */
-	KeyEvent.__keyDownMap = {};
-
-	/**
-	 * 添加按键事件监听
-	 */
-	KeyEvent.addListener = function() {
-	    document.onkeydown = function(e) {
-	        var e = e || event, code = e.keyCode || e.which;
-	        KeyEvent.__keyDownMap[code] = true;
-	    }
-
-	    document.onkeyup = function(e) {
-	        var e = e || event, code = e.keyCode || e.which;
-	        KeyEvent.__keyDownMap[code] = false;
-	    }
-	}
-	/**
-	 * 移除按键事件监听
-	 */
-	KeyEvent.removeListener = function() {
-	    document.onkeydown = null;
-	    document.onkeyup = null;
-	}
-	/**
-	 * 检查某个按键是否被按下
-	 * @param {String} key
-	 */
-	KeyEvent.check = function(key) {
-	    var code = KeyEvent.__keyCodeMap[key];
-	    return !!KeyEvent.__keyDownMap[code];
+	var Color = function (r, g, b, a) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
 	}
 
-	module.exports = KeyEvent;
+	Color.prototype.render = function() {
+		return 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + this.a + ')';
+	};
 
-
+	module.exports = Color;
 
 /***/ },
-/* 12 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AnimateObj = __webpack_require__(5);
-
-	/**
-	* 绘制移动背景层
-	* 支持水平和垂直两种移动方式
-	*/
-	var getMovingBg = function (img, width, height, speed, isVertical){
-		var bg = new AnimateObj({
-		//注意这里的宽高设置需要等比例
-		/*
-		* 背景图显示宽度
-		*/
-		width : width,
-		/*
-		* 背景图显示高度
-		*/
-		height : height,
-		img : img,
-		/*
-		* 背景滚动的速度, 
-		* 当垂直滚动时，正值向下滚动,负值向上滚动
-		* 当水平滚动时，
-		*/
-		speed : speed, 
-		rollLen : 0, //背景滚动的距离
-		/*
-		* 只支持水平或垂直滚动,true为垂直，false为水平
-		*/
-		isVertical : isVertical,
-		//自动更新父级画布
-		autoChange : true
-	});
-
-	/*
-	* 背景滚动，只支持水平或垂直滚动
-	*/
-	bg.customDraw = function(ctx){
-		//向上运动，调整因子r为-1；向下运动，调整因子为1
-		var r = this.speed > 0 ? 1 : -1;
-
-		//背景不运动
-		if(this.speed === 0){
-			ctx.drawImage(this.img, 0 , 0, this.width, this.height);
-			return ;
-		}
-
-		//垂直运动
-		if(this.isVertical){	
-			ctx.drawImage(this.img, 0 , this.rollLen - r * this.height, this.width, this.height);
-			ctx.drawImage(this.img, 0 , this.rollLen, this.width, this.height);
-				
-		}else{//水平运动
-			ctx.drawImage(this.img, -r * this.width + this.rollLen, 0, this.width, this.height);
-			ctx.drawImage(this.img, this.rollLen, 0, this.width, this.height);
-		}
-
-	}
-
-	bg.update = function(){
-		this.rollLen += this.speed;
-
-		var r = this.speed > 0 ? 1 : -1;
-		if(this.isVertical && r * this.rollLen > this.height ||
-		  !this.isVertical && r * this.rollLen > this.width){
-			this.rollLen = 0;
-		}
-		this.parent.change();
-	}
-	 return bg;
-	}
-
-	module.exports = getMovingBg;
-
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CSE = __webpack_require__(6);
-	var Component = __webpack_require__(7);
-	__webpack_require__(14);
+	var CSE = __webpack_require__(3);
+	var Component = __webpack_require__(4);
+	__webpack_require__(10);
 	var Game = function (cfg) {
 	  /**
 	   * read only
@@ -1477,7 +1076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 10 */
 /***/ function(module, exports) {
 
 	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -1506,14 +1105,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}());
 
 /***/ },
-/* 15 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CSE = __webpack_require__(6);
+	var CSE = __webpack_require__(3);
 	/*
 	* 动画分层渲染
 	*/
-	var Container = __webpack_require__(16);
+	var Container = __webpack_require__(12);
 	var Layer = function(cfg) {
 	    /*
 	    * 分层渲染的画布对象
@@ -1572,12 +1171,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/*
+	* 强制清除画布层
+	*/
+	Layer.prototype.forceClear = function(){
+	    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+
+	/*
 	* 清除画布层
 	*/
 	Layer.prototype.clear = function(){
 	    //画布层变化时才清除画布
 	    if(this.context && this._change){
-	        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	        this.forceClear();
 	    }
 	}
 
@@ -1585,11 +1191,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CSE = __webpack_require__(6);
-	var AnimateObj = __webpack_require__(5);
+	var CSE = __webpack_require__(3);
+	var AnimateObj = __webpack_require__(2);
 
 	/**
 	* 容器组件基类
@@ -1664,6 +1270,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            childs[i].destroy();
 	        }   
 	    }
+	    
+	    this.childs = [];
 	}
 
 	/**

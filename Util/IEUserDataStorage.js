@@ -1,4 +1,4 @@
-/**
+IE/**
 * Usage: 
 <!--[if IE]>
 <script src="UserDataStorage.js"></script> 

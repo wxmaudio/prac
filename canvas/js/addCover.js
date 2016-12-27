@@ -93,7 +93,7 @@ $(function() {
         }
         addMasker($mod);
 
-        
+        cover
         $(window).load(function(){
             addMasker($mod);
         });

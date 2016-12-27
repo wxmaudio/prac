@@ -74,6 +74,8 @@ Container.prototype.destroyChilds = function(){
             childs[i].destroy();
         }   
     }
+    
+    this.childs = [];
 }
 
 /**

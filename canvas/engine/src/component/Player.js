@@ -86,10 +86,10 @@ Player.prototype._insideBoundary = function() {
  * @param {Event} 事件对象e
  */
 Player.prototype.setPosition = function(e){
-    //console.log(e.clientX,"y:",e.clientY);
     if(CSE.isMobile()){
-        this.x = event.changedTouches[0].clientX - this.width/2;
-        this.y = event.changedTouches[0].clientY - this.height/2;
+        //console.log(e.touches.item(0));
+        this.x = e.changedTouches[0].clientX - this.width/2;
+        this.y = e.changedTouches[0].clientY - this.height/2;
     }else{
         var pos = win2canvas(this.canvas, e.clientX, e.clientY);
         this.x = pos.x - this.width/2;
@@ -138,7 +138,7 @@ Player.prototype.update = function(deltaTime) {
     } else {
         this.keyDownRight = false;
     }
-    
+
     if(this.keyDownLeft) {
         this.x += - this.vx;   
     }

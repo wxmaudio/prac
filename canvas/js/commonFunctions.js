@@ -32,6 +32,7 @@ function lerpAngle(a, b, t) {
 	return a + d * t;
 }
 
+//按照某个速度靠近某个目标,速度由快变慢
 function lerpDistance(aim, cur, ratio) {
 	var delta = cur - aim;
 	return aim + delta * ratio;

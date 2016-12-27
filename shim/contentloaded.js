@@ -34,14 +34,21 @@ function contentLoaded(win, fn) {
     },
 
     poll = function() {
-        try { root.doScroll('left'); } catch(e) { setTimeout(poll, 50); return; }
+        try { 
+            root.doScroll('left'); 
+        } catch(e) { 
+            setTimeout(poll, 50); 
+            return; 
+        }
         init('poll');
     };
 
     if (doc.readyState == 'complete') fn.call(win, 'lazy');
     else {
         if (!modern && root.doScroll) {
-            try { top = !win.frameElement; } catch(e) { }
+            try { 
+                top = !win.frameElement; 
+            } catch(e) { }
             if (top) poll();
         }
         doc[add](pre + 'DOMContentLoaded', init, false);

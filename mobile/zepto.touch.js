@@ -1,31 +1,36 @@
 //     Zepto.js
 //     (c) 2010-2016 Thomas Fuchs
 //     Zepto.js may be freely distributed under the MIT license.
-
+//      https://github.com/madrobby/zepto/blob/master/src/touch.js#files
 ;(function($){
   var touch = {},
     touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
     longTapDelay = 750,
     gesture
 
+  //判断向左、向右、向上还是向下滑动
   function swipeDirection(x1, x2, y1, y2) {
     return Math.abs(x1 - x2) >=
       Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
   }
 
+  //长按
   function longTap() {
     longTapTimeout = null
+    //发生了触屏
     if (touch.last) {
       touch.el.trigger('longTap')
       touch = {}
     }
   }
 
+  //取消长按
   function cancelLongTap() {
     if (longTapTimeout) clearTimeout(longTapTimeout)
     longTapTimeout = null
   }
-
+ 
+  //取消所有的定时器
   function cancelAll() {
     if (touchTimeout) clearTimeout(touchTimeout)
     if (tapTimeout) clearTimeout(tapTimeout)
@@ -55,6 +60,7 @@
     }
 
     $(document)
+    //Internet Explorer 10+ 中的指针和手势事件
       .bind('MSGestureEnd', function(e){
         var swipeDirectionFromVelocity =
           e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null
@@ -63,7 +69,9 @@
           touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
         }
       })
+      //开始触摸
       .on('touchstart MSPointerDown pointerdown', function(e){
+
         if((_isPointerType = isPointerEventType(e, 'down')) &&
           !isPrimaryTouch(e)) return
         firstTouch = _isPointerType ? e : e.touches[0]
@@ -73,19 +81,26 @@
           touch.x2 = undefined
           touch.y2 = undefined
         }
+        //记录当前时间
         now = Date.now()
         delta = now - (touch.last || now)
+        //开始触摸的元素节点
         touch.el = $('tagName' in firstTouch.target ?
           firstTouch.target : firstTouch.target.parentNode)
         touchTimeout && clearTimeout(touchTimeout)
         touch.x1 = firstTouch.pageX
         touch.y1 = firstTouch.pageY
+
+        //0~250ms内的两次点击则被认为是双击
         if (delta > 0 && delta <= 250) touch.isDoubleTap = true
+        
         touch.last = now
+        //设置长按定时器
         longTapTimeout = setTimeout(longTap, longTapDelay)
         // adds the current touch contact for IE gesture recognition
         if (gesture && _isPointerType) gesture.addPointer(e.pointerId)
       })
+      //移动
       .on('touchmove MSPointerMove pointermove', function(e){
         if((_isPointerType = isPointerEventType(e, 'move')) &&
           !isPrimaryTouch(e)) return
@@ -97,12 +112,14 @@
         deltaX += Math.abs(touch.x1 - touch.x2)
         deltaY += Math.abs(touch.y1 - touch.y2)
       })
+      //结束触摸
       .on('touchend MSPointerUp pointerup', function(e){
         if((_isPointerType = isPointerEventType(e, 'up')) &&
           !isPrimaryTouch(e)) return
+        //取消长按事件触发
         cancelLongTap()
 
-        // swipe
+        // swipe 水平或垂直超过30px被认为是swipe 
         if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
             (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
 
@@ -137,6 +154,7 @@
               }
 
               // trigger single tap after 250ms of inactivity
+              // 250ms内没有再次触摸则被认为是singleTap
               else {
                 touchTimeout = setTimeout(function(){
                   touchTimeout = null

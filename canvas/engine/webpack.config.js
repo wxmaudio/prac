@@ -4,7 +4,8 @@ var production = process.argv.indexOf('-p') >= 0,//是否为生产环境
 
 module.exports = {
     entry :{
-        [pubFilename] : __dirname + '/index.js'
+        //[pubFilename] : __dirname + '/index.js',
+        shape : __dirname + '/shape.js'
     },
     output : {
         libraryTarget: 'umd',

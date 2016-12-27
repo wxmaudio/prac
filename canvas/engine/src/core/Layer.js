@@ -61,12 +61,19 @@ Layer.prototype.render = function(){
 }
 
 /*
+* 强制清除画布层
+*/
+Layer.prototype.forceClear = function(){
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+}
+
+/*
 * 清除画布层
 */
 Layer.prototype.clear = function(){
     //画布层变化时才清除画布
     if(this.context && this._change){
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.forceClear();
     }
 }
 

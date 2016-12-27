@@ -3,8 +3,21 @@ var utils = {
     return (value - min) / (max - min);
   },
 
-  lerp: function(norm, min, max) {
+  lerp : function(norm, min, max) {
     return (max - min) * norm + min;
+  },
+
+  lerpAngle : function(a, b, t) {
+    var d = b - a;
+    if (d > Math.PI) d = d - 2 * Math.PI;
+    if (d < -Math.PI) d = d + 2 * Math.PI;
+    return a + d * t;
+  },
+
+  //按照某个速度靠近某个目标,速度由快变慢
+  lerpDistance : function(aim, cur, ratio) {
+    var delta = cur - aim;
+    return aim + delta * ratio;
   },
 
   map: function(value, sourceMin, sourceMax, destMin, destMax) {
@@ -18,10 +31,11 @@ var utils = {
   /*
   * 计算两个坐标点之间的距离
   */
-  distance: function(p0, p1) {
+  distance: function(p0, p1, details) {
     var dx = p1.x - p0.x,
-      dy = p1.y - p0.y;
-    return Math.sqrt(dx * dx + dy * dy);
+      dy = p1.y - p0.y,
+      d = Math.sqrt(dx * dx + dy * dy);
+      return details ? [dx, dy, d] : d;
   },
 
   /*
